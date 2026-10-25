@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A new daily challenge: ten short passages, five by people and five by AI. Can you spot the AI? Three levels, a score out of ten and a certificate to share.">
+<title>Spot the AI · AI vs Turing</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.levels{display:flex;gap:.5rem;flex-wrap:wrap}
+.levels button[aria-pressed="true"]{background:var(--signal);border-color:var(--signal);color:#fff}
+.spot{background:var(--card);border-radius:24px;padding:clamp(1.2rem,3vw,2rem);display:grid;gap:1.25rem;box-shadow:0 4px 24px rgba(80,60,40,.08)}
+.passage{font:400 clamp(1.15rem,2.4vw,1.4rem)/1.6 var(--display);font-variation-settings:"SOFT" 100;background:var(--soft);border-radius:18px;padding:1.3rem 1.4rem;margin:0;max-width:none}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.choice button{padding:1rem;font-size:1rem}
+.choice button:disabled{opacity:.5}
+.choice button.right,.choice button.wrong{opacity:1;border-width:2px}
+.choice button.right{border-color:var(--good);color:var(--good);background:var(--card)}
+.choice button.wrong{border-color:var(--bad);color:var(--bad);background:var(--card)}
+.dots{display:flex;gap:.35rem;flex-wrap:wrap}
+.dots i{width:.8rem;height:.8rem;border-radius:50%;background:var(--line);display:block}
+.dots i.ok{background:var(--good)} .dots i.no{background:var(--bad)} .dots i.now{background:var(--signal)}
+.share{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.share input{flex:1 1 12rem;padding:.75rem;background:var(--paper);color:var(--ink)}
+.played{background:var(--soft);border-radius:14px;padding:.9rem 1.1rem;font-size:.95rem}
+#pnext{background:var(--signal);border-color:var(--signal);color:#fff}
+#copied{color:var(--good);font-weight:600;font-size:.9rem}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">Home</a><a href="games.html" aria-current="page">Games</a><a href="firsts.html">Human firsts</a><a href="claude.html">Meet Claude</a></nav></header>
+
+  <section class="hero" aria-labelledby="h1">
+    <p class="label">Daily challenge · <span id="today"></span></p>
+    <h1 id="h1">Can you spot <em>the AI?</em></h1>
+    <p class="lede">Ten short passages. Five were written by people, some of them centuries ago. Five were written by Claude for this page. A fresh set every day, at three levels.</p>
+    <div class="levels" role="group" aria-label="Level">
+      <button type="button" data-l="0">Beginner</button>
+      <button type="button" data-l="1">Intermediate</button>
+      <button type="button" data-l="2">Expert</button>
+    </div>
+    <p class="note" id="streak" hidden></p>
+  </section>
+
+  <section aria-label="The challenge">
+    <div class="spot">
+      <div class="gamehead"><span class="label" id="pn"></span><span class="label" id="ps"></span></div>
+      <div class="dots" id="dots" aria-hidden="true"></div>
+      <p class="played" id="played" hidden></p>
+      <div id="play">
+        <blockquote class="passage" id="pt"></blockquote>
+        <div class="choice" style="margin-top:1rem"><button type="button" id="bH">A person wrote this</button><button type="button" id="bA">AI wrote this</button></div>
+        <div class="result" id="pr" hidden style="margin-top:1rem"><span class="tag" id="ptag"></span><p id="pwhy"></p></div>
+      </div>
+      <div class="end" id="pend" hidden>
+        <span class="label">Your score</span>
+        <span class="big" id="pfinal"></span>
+        <h3 id="pverdict"></h3>
+        <p id="pline"></p>
+        <div class="share">
+          <button type="button" id="bshare">Share my score</button>
+          <span id="copied" hidden>Copied, ready to paste</span>
+        </div>
+        <div class="share">
+          <input type="text" id="cname" maxlength="40" placeholder="Your name for the certificate" aria-label="Your name for the certificate">
+          <button type="button" id="bcert">Download certificate</button>
+        </div>
+      </div>
+      <div class="foot"><span class="note">Human passages are from public-domain books and letters. AI passages were written by Claude.</span><button type="button" id="pnext" hidden>Next passage</button></div>
+    </div>
+  </section>
+
+  <footer><span class="brand">AI <span>vs</span> Turing</span><span class="label">ai-vs-turing.com</span><p class="disclaimer">An independent showcase. Not affiliated with or endorsed by Anthropic. Claude is a product of <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>.</p></footer>
+</div>
+
+<script>
+(function(){
+  // h: [text, source]   a: [text, the giveaway]
+  var P=[
+   {h:[
+    ["It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness.","Charles Dickens, A Tale of Two Cities, 1859."],
+    ["It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.","Jane Austen, Pride and Prejudice, 1813."],
+    ["Happy families are all alike; every unhappy family is unhappy in its own way.","Leo Tolstoy, Anna Karenina, 1878 (Constance Garnett's translation)."],
+    ["Two roads diverged in a wood, and I, I took the one less traveled by, and that has made all the difference.","Robert Frost, The Road Not Taken, 1916."],
+    ["I wandered lonely as a cloud that floats on high o'er vales and hills, when all at once I saw a crowd, a host, of golden daffodils.","William Wordsworth, 1807."],
+    ["Why, sometimes I've believed as many as six impossible things before breakfast.","Lewis Carroll, Through the Looking-Glass, 1871. The White Queen speaking."],
+    ["Do I contradict myself? Very well then I contradict myself. I am large, I contain multitudes.","Walt Whitman, Song of Myself, 1855."],
+    ["We are all in the gutter, but some of us are looking at the stars.","Oscar Wilde, Lady Windermere's Fan, 1892."],
+    ["Whatever our souls are made of, his and mine are the same.","Emily Brontë, Wuthering Heights, 1847."],
+    ["I'm not afraid of storms, for I'm learning how to sail my ship.","Louisa May Alcott, Little Women, 1868."]],
+    a:[
+    ["Rainy days offer a wonderful opportunity to slow down, reflect, and reconnect with the simple joys of life, such as reading, baking, or spending quality time with loved ones.","A tidy list of three, upbeat and general. Classic assistant style."],
+    ["Friendship is a beautiful tapestry woven from shared experiences, mutual respect, and unwavering support through life's many ups and downs.","“Tapestry” and “unwavering support” are well-worn AI favourites."],
+    ["In today's fast-paced world, it's more important than ever to prioritize self-care, set healthy boundaries, and embrace the journey of personal growth.","“In today's fast-paced world” is a giveaway opener."],
+    ["Cats are fascinating creatures known for their independence, curiosity, and playful nature, making them beloved companions for millions of people around the world.","Reads like an encyclopedia summary: true, smooth, and about nobody in particular."],
+    ["Ultimately, happiness is not a destination but a journey, one that invites us to cherish each moment and find meaning in the everyday.","“Not a destination but a journey” plus a neat moral at the end."],
+    ["Coffee is more than just a beverage; it's a ritual, a moment of comfort, and for many, an essential part of starting the day on the right foot.","“More than just a…” followed by a list of three."],
+    ["Learning a new language can be challenging, but with consistent practice, patience, and a positive mindset, anyone can achieve fluency.","Encouraging, balanced and hedged. No real person or story behind it."],
+    ["The ocean is a vast and mysterious realm, teeming with life and offering endless inspiration for artists, scientists, and dreamers alike.","“Vast and mysterious realm” and “alike” at the end of a list of three."],
+    ["Gardening is a rewarding hobby that not only beautifies your surroundings but also promotes mental well-being and a deeper connection with nature.","“Not only… but also” with wellbeing benefits: brochure-smooth."],
+    ["While opinions may vary, many people find that autumn's crisp air, vibrant foliage, and cozy atmosphere make it the most delightful season of the year.","“While opinions may vary” is a very AI way to avoid having an opinion."]]},
+   {h:[
+    ["I went to the woods because I wished to live deliberately, to front only the essential facts of life, and see if I could not learn what it had to teach.","Henry David Thoreau, Walden, 1854."],
+    ["Our life is frittered away by detail. Simplify, simplify.","Henry David Thoreau, Walden, 1854."],
+    ["I am certain of nothing but the holiness of the Heart's affections and the truth of Imagination.","John Keats, in a letter to Benjamin Bailey, 1817."],
+    ["If I read a book and it makes my whole body so cold no fire can ever warm me, I know that is poetry.","Emily Dickinson, as recorded by Thomas Wentworth Higginson, 1870."],
+    ["I can resist everything except temptation.","Oscar Wilde, Lady Windermere's Fan, 1892."],
+    ["The only way to get rid of a temptation is to yield to it.","Oscar Wilde, The Picture of Dorian Gray, 1890."],
+    ["I do not want people to be very agreeable, as it saves me the trouble of liking them a great deal.","Jane Austen, in a letter to her sister Cassandra, 1798."],
+    ["One cannot think well, love well, sleep well, if one has not dined well.","Virginia Woolf, A Room of One's Own, 1929."],
+    ["For my part, I travel not to go anywhere, but to go. I travel for travel's sake. The great affair is to move.","Robert Louis Stevenson, Travels with a Donkey in the Cévennes, 1879."],
+    ["I often think that the night is more alive and more richly coloured than the day.","Vincent van Gogh, in a letter to his brother Theo, 1888 (translated)."]],
+    a:[
+    ["A library is the only place where silence is shared like a meal.","A neat simile that sounds wise but doesn't quite hold up when you think about it."],
+    ["Most of growing up is learning which of your fears were furniture all along.","Striking, but a little too polished, like a line built to be quoted."],
+    ["The sea keeps no diary, yet it remembers every shore.","Poetic-sounding, but it doesn't really mean anything. Common in AI aphorisms."],
+    ["I trust people who apologise to dogs when they step on their tails.","AI often borrows this kind of warm, relatable observation from the internet."],
+    ["Rain is the sky admitting it cannot hold everything.","Giving weather human feelings is a favourite AI move."],
+    ["An old map is a list of promises nobody kept.","A tidy metaphor with no real person or place behind it."],
+    ["Every kitchen drawer has one key that opens nothing and is never thrown away.","Very human-sounding. AI is good at universal little details like this."],
+    ["Patience is just hope that has learned to sit down.","The “X is just Y that has learned to Z” pattern is a modern AI favourite."],
+    ["The best conversations happen in doorways, when someone is already halfway to leaving.","Lovely, but generic: it could be about anyone, anywhere."],
+    ["A garden is a long argument with the weather that you agree to lose gracefully.","Well made, but the polish and balance give it away."]]},
+   {h:[
+    ["I like work: it fascinates me. I can sit and look at it for hours.","Jerome K. Jerome, Three Men in a Boat, 1889. It sounds like a modern joke, but it's 135 years old."],
+    ["It is impossible to enjoy idling thoroughly unless one has plenty of work to do.","Jerome K. Jerome, Idle Thoughts of an Idle Fellow, 1886."],
+    ["Work consists of whatever a body is obliged to do, and Play consists of whatever a body is not obliged to do.","Mark Twain, The Adventures of Tom Sawyer, 1876."],
+    ["Fish and visitors stink in three days.","Benjamin Franklin, Poor Richard's Almanack, 1736."],
+    ["An inconvenience is only an adventure wrongly considered; an adventure is an inconvenience rightly considered.","G. K. Chesterton, On Running After One's Hat, 1908."],
+    ["When I am playing with my cat, who knows whether she have more sport in dallying with me than I have in gaming with her?","Michel de Montaigne, Essays, about 1580 (John Florio's translation, 1603)."],
+    ["No man but a blockhead ever wrote, except for money.","Samuel Johnson, recorded by James Boswell, 1776."],
+    ["Nothing puzzles me more than time and space; and yet nothing troubles me less, as I never think about them.","Charles Lamb, in a letter, 1810."],
+    ["One of the pleasantest things in the world is going a journey; but I like to go by myself.","William Hazlitt, On Going a Journey, 1822."],
+    ["The person, be it gentleman or lady, who has not pleasure in a good novel, must be intolerably stupid.","Jane Austen, Northanger Abbey, 1817."]],
+    a:[
+    ["I have found that the hour after supper is the only honest one; the day's ambitions are spent, and a man may at last admit what he truly wanted.","AI imitating an old essayist. A touch too smooth, and it never names a real supper."],
+    ["My aunt maintained that a well-made bed could cure most melancholy, and I have never had the courage to test her on the remainder.","The aunt is invented. AI is happy to make up a relative to sound human."],
+    ["There is no traveller so wretched as he who has arrived; all the pleasure was in the going, and he has spent it.","Written in an old style to sit beside Stevenson and Hazlitt. Close, isn't it?"],
+    ["Letters, I think, are the only conversations in which one is permitted to be both brave and absent.","Elegant and balanced. AI loves a neat pair like “brave and absent”."],
+    ["I like a long walk best when I have no notion where it ends, and least when somebody has told me.","AI copying the shape of a 19th-century walking essay."],
+    ["We kept the parlour for visitors and lived in the kitchen, which tells you all you need to know about where the truth of a house is kept.","An invented childhood memory, rounded off with a moral. A favourite AI trick."],
+    ["A man who is always punctual has a great deal of time to wait, and very little else.","A Victorian-style quip made to order. The ending is a little too neat."],
+    ["I have never once regretted staying in on a wet evening, and I have regretted almost every party.","Sounds like a real grumble, but it was written in a second to fool you."],
+    ["The difficulty with a fine view is that one feels obliged to think something about it.","AI imitating Jerome K. Jerome's dry humour."],
+    ["Idleness is not the absence of work but the refusal to be hurried by it.","“Not X but Y” is one of AI's favourite sentence shapes."]]}
+  ];
+  var NAMES=["Beginner","Intermediate","Expert"];
+  var $=function(id){return document.getElementById(id)};
+  var store={get:function(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+  var now=new Date(), dayKey=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
+  var dayNum=Math.floor(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())/864e5);
+  $("today").textContent=now.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"});
+
+  function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  function shuffle(a,r){a=a.slice();for(var k=a.length-1;k>0;k--){var j=Math.floor(r()*(k+1));var t=a[k];a[k]=a[j];a[j]=t}return a}
+
+  var lv=store.get("spot-level");if(lv!==0&&lv!==1&&lv!==2)lv=0;
+  var set=[],i=0,score=0,marks=[];
+
+  function deal(){
+    var r=rng(dayNum*31+lv*7919);
+    var h=shuffle(P[lv].h,r).slice(0,5).map(function(x){return{t:x[0],w:x[1],ai:false}});
+    var a=shuffle(P[lv].a,r).slice(0,5).map(function(x){return{t:x[0],w:x[1],ai:true}});
+    set=shuffle(h.concat(a),r);i=0;score=0;marks=[];
+    Array.prototype.forEach.call(document.querySelectorAll(".levels button"),function(b){b.setAttribute("aria-pressed",String(+b.dataset.l===lv))});
+    var past=(store.get("spot-results")||{})[dayKey+"-"+lv];
+    $("played").hidden=!past;
+    if(past)$("played").textContent="You scored "+past+" / 10 on today's "+NAMES[lv]+" set. Play again for practice, or come back tomorrow for a new one.";
+    $("play").hidden=false;$("pend").hidden=true;show();
+  }
+  function dots(){var h="";for(var k=0;k<10;k++)h+='<i class="'+(marks[k]===true?"ok":marks[k]===false?"no":k===i?"now":"")+'"></i>';$("dots").innerHTML=h}
+  function show(){
+    $("pn").textContent=NAMES[lv]+" · Passage "+(i+1)+" of 10";$("ps").textContent="Score "+score;
+    $("pt").textContent="“"+set[i].t+"”";
+    ["bH","bA"].forEach(function(id){$(id).disabled=false;$(id).className=""});
+    $("pr").hidden=true;$("pnext").hidden=true;dots();
+  }
+  function pick(ai){
+    var p=set[i],ok=ai===p.ai;if(ok)score++;marks[i]=ok;
+    $(p.ai?"bA":"bH").classList.add("right");if(!ok)$(ai?"bA":"bH").classList.add("wrong");
+    $("bH").disabled=$("bA").disabled=true;
+    $("ptag").textContent=(ok?"Well spotted: ":"Tricky one: ")+(p.ai?"AI wrote this":"a person wrote this");
+    $("ptag").className="tag "+(ok?"ok":"no");
+    $("pwhy").textContent=p.ai?"Written by Claude for this page. "+p.w:p.w;
+    $("pr").hidden=false;$("ps").textContent="Score "+score;dots();
+    $("pnext").textContent=i<9?"Next passage":"See my score";$("pnext").hidden=false;
+    $("pnext").scrollIntoView({block:"nearest",behavior:"smooth"});
+  }
+  function finish(){
+    $("play").hidden=true;$("pnext").textContent="Play again";$("played").hidden=true;
+    $("pfinal").textContent=score+" / 10";
+    var v,l;
+    if(score===10){v="Perfect eye.";l="Not a single passage got past you. Try the next level up, if you dare."}
+    else if(score>=8){v="Sharp reader.";l="You can hear the difference between a person and a pattern. Most of the time."}
+    else if(score>=5){v="Nicely done.";l="Right where most readers land. The line between people and machines is thinner than it looks."}
+    else{v="These were hard!";l="Don't worry: the AI passages were written to fool you. Read the explanations and try again tomorrow."}
+    $("pverdict").textContent=v;$("pline").textContent=l;$("pend").hidden=false;$("copied").hidden=true;
+    var res=store.get("spot-results")||{},key=dayKey+"-"+lv;if(!(key in res)){res[key]=score;store.set("spot-results",res)}
+    var days=store.get("spot-days")||[];if(days.indexOf(dayKey)<0){days.push(dayKey);store.set("spot-days",days)}
+    streak();
+  }
+  function streak(){
+    var days=store.get("spot-days")||[],n=0,d=new Date(now);
+    while(true){var k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");if(days.indexOf(k)<0)break;n++;d.setDate(d.getDate()-1)}
+    $("streak").hidden=n<2;$("streak").textContent="You're on a "+n+"-day streak. Keep it going!";
+  }
+
+  $("bH").addEventListener("click",function(){pick(false)});
+  $("bA").addEventListener("click",function(){pick(true)});
+  $("pnext").addEventListener("click",function(){if(!$("pend").hidden){deal();return}if(i<9){i++;show()}else finish()});
+  Array.prototype.forEach.call(document.querySelectorAll(".levels button"),function(b){b.addEventListener("click",function(){lv=+b.dataset.l;store.set("spot-level",lv);deal()})});
+
+  $("bshare").addEventListener("click",function(){
+    var grid=marks.map(function(m){return m?"🟩":"⬜"}).join("");
+    var text="Can you spot the AI? "+NAMES[lv]+", "+dayKey+"\n"+score+"/10 "+grid+"\nhttps://ai-vs-turing.com/spot.html";
+    if(navigator.share){navigator.share({text:text}).catch(function(){});return}
+    var done=function(){$("copied").hidden=false};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(done,function(){prompt("Copy your score:",text)});
+    else prompt("Copy your score:",text);
+  });
+
+  $("bcert").addEventListener("click",function(){
+    var name=$("cname").value.trim()||"A keen-eyed reader";
+    var c=document.createElement("canvas");c.width=1600;c.height=1100;var x=c.getContext("2d");
+    x.fillStyle="#FBF7F1";x.fillRect(0,0,1600,1100);
+    x.strokeStyle="#E3D3C3";x.lineWidth=6;x.beginPath();x.roundRect?x.roundRect(60,60,1480,980,40):x.rect(60,60,1480,980);x.stroke();
+    x.textAlign="center";x.fillStyle="#B87A62";x.font="600 34px Nunito, system-ui, sans-serif";x.fillText("AI vs Turing · Daily challenge",800,200);
+    x.fillStyle="#36312C";x.font="600 84px Fraunces, Georgia, serif";x.fillText("Certificate of a keen eye",800,320);
+    x.fillStyle="#7A726A";x.font="400 36px Nunito, system-ui, sans-serif";x.fillText("This is to certify that",800,420);
+    x.fillStyle="#36312C";x.font="italic 600 76px Fraunces, Georgia, serif";x.fillText(name,800,520);
+    x.fillStyle="#7A726A";x.font="400 36px Nunito, system-ui, sans-serif";x.fillText("read ten passages and told people from machines, scoring",800,610);
+    x.fillStyle="#B87A62";x.font="600 150px Fraunces, Georgia, serif";x.fillText(score+" / 10",800,790);
+    x.fillStyle="#7A726A";x.font="400 34px Nunito, system-ui, sans-serif";x.fillText(NAMES[lv]+" level · "+now.toLocaleDateString(undefined,{day:"numeric",month:"long",year:"numeric"})+" · ai-vs-turing.com",800,920);
+    var a=document.createElement("a");a.download="spot-the-ai-certificate.png";a.href=c.toDataURL("image/png");document.body.appendChild(a);a.click();a.remove();
+  });
+
+  streak();deal();
+})();
+</script>
+</body>
+</html>
