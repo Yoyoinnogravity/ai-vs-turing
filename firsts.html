@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Gravity, calculus and relativity: three ideas humans had first, each with a demo you can play with.">
+<title>Human Firsts · AI vs Turing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<style>
+.idea{display:grid;gap:1.1rem;border-top:2px solid var(--ink);padding-top:1.4rem}
+.idea .meta{display:flex;gap:1rem;flex-wrap:wrap;align-items:baseline}
+.idea .yr{font:900 2.4rem/1 var(--display);font-stretch:75%;color:var(--signal);font-variant-numeric:tabular-nums}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:1rem;display:grid;gap:.8rem}
+.demo canvas{width:100%;height:auto;display:block;background:var(--paper);border-radius:3px;max-width:100%}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;gap:.8rem;align-items:center;font:600 .85rem var(--mono)}
+.ctl input{width:100%;accent-color:var(--signal)}
+.readout{font:600 1rem/1.5 var(--mono);color:var(--machine)}
+.angle{font-size:.98rem;color:var(--muted);max-width:65ch}
+</style>
+<div class="wrap">
+  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">The test</a><a href="claude.html">Meet Claude</a><a href="quiz.html">Prove you&#39;re human</a><a href="game.html">Human or machine?</a><a href="captcha.html">CAPTCHA gauntlet</a><a href="cryptic.html">Cryptic clues</a><a href="rules.html">Rule stack</a><a href="last.html">The last human</a><a href="firsts.html" aria-current="page">Human firsts</a></nav></header>
+  <section class="hero" aria-labelledby="h1">
+    <p class="label">Human firsts</p>
+    <h1 id="h1">Ideas machines <em>learned from us.</em></h1>
+    <p class="lede">Every AI that predicts a planet's path, trains on a curve or keeps your phone's map accurate runs on ideas that people found first, often one person, alone, after years of thinking. Here are three, with demos you can play with.</p>
+  </section>
+
+  <section class="idea" aria-labelledby="newton">
+    <div class="meta"><span class="yr">1687</span><h2 id="newton">Newton's cannonball</h2></div>
+    <p>Isaac Newton asked what happens if you fire a cannon from a mountain top, faster and faster. Slow shots fall to the ground. Fast enough, and the ground curves away beneath the ball as fast as it falls, so it never lands. That is an orbit, and the same law of gravity explains the Moon and an apple.</p>
+    <div class="demo">
+      <canvas id="cv1" width="640" height="400" aria-label="Cannonball fired around the Earth"></canvas>
+      <label class="ctl" for="v1"><span>Launch speed</span><input type="range" id="v1" min="2" max="12" step="0.1" value="6"><span id="v1o"></span></label>
+      <p class="readout" id="r1"></p>
+    </div>
+    <p class="angle">Every satellite launch, every space-probe trajectory and every AI that plans one still uses Newton's law of gravity, written down in 1687.</p>
+  </section>
+
+  <section class="idea" aria-labelledby="calc">
+    <div class="meta"><span class="yr">1680s</span><h2 id="calc">Calculus</h2></div>
+    <p>Isaac Newton and Gottfried Leibniz each worked out how to handle things that change continuously: cut the change into thinner and thinner slices and add them up. Here, the area under the curve y = x² from 0 to 2 is filled with rectangles. Add more and watch the total close in on the exact answer, 8/3.</p>
+    <div class="demo">
+      <canvas id="cv2" width="640" height="360" aria-label="Rectangles filling the area under a curve"></canvas>
+      <label class="ctl" for="v2"><span>Rectangles</span><input type="range" id="v2" min="1" max="100" step="1" value="4"><span id="v2o"></span></label>
+      <p class="readout" id="r2"></p>
+    </div>
+    <p class="angle">Training an AI model is calculus at enormous scale: working out, slice by slice, which way to nudge billions of numbers to make its answers a little better.</p>
+  </section>
+
+  <section class="idea" aria-labelledby="rel">
+    <div class="meta"><span class="yr">1905</span><h2 id="rel">Relativity</h2></div>
+    <p>Albert Einstein showed that time is not the same for everyone. A clock moving fast runs slow compared with one standing still. At everyday speeds the effect is tiny. Near the speed of light it is enormous. Move the slider to send a spaceship faster.</p>
+    <div class="demo">
+      <canvas id="cv3" width="640" height="260" aria-label="Clock on Earth and clock on a fast spaceship"></canvas>
+      <label class="ctl" for="v3"><span>Ship speed</span><input type="range" id="v3" min="0" max="0.995" step="0.005" value="0.8"><span id="v3o"></span></label>
+      <p class="readout" id="r3"></p>
+    </div>
+    <p class="angle">Your phone's map depends on it. GPS satellites carry clocks that would drift by about 38 microseconds a day without Einstein's corrections, enough to put you kilometres off course.</p>
+  </section>
+
+  <footer><span class="brand">AI <span>vs</span> Turing</span><span class="label">ai-vs-turing.com</span><p class="disclaimer">An independent showcase. Not affiliated with or endorsed by Anthropic. Claude is a product of <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>.</p></footer>
+</div>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  function col(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // 1. Newton's cannonball
+  var c1=$("cv1"),x1=c1.getContext("2d"),GM=398600,RE=6371,h0=500,path=[],anim=null;
+  function fire(){
+    var v=+$("v1").value; $("v1o").textContent=v.toFixed(1)+" km/s";
+    var x=0,y=RE+h0,vx=v,vy=0,dt=5,t=0,pts=[[x,y]],out="",E=v*v/2-GM/(RE+h0);
+    while(t<20000){
+      var r=Math.hypot(x,y),a=-GM/(r*r*r);vx+=a*x*dt;vy+=a*y*dt;x+=vx*dt;y+=vy*dt;t+=dt;pts.push([x,y]);
+      if(Math.hypot(x,y)<RE){out="land";break}
+      if(Math.hypot(x,y)>RE*3.2){out=E>=0?"escape":"orbit";break}
+      if(t>600&&pts.length>40&&Math.abs(Math.atan2(x,y))<0.02&&x>-1&&y>0){out="orbit";break}
+    }
+    if(!out)out="orbit";
+    path=pts;var msg={land:"The ball falls back to Earth.",orbit:"Orbit! The Earth curves away as fast as the ball falls. Orbital speed near Earth is about 7.9 km/s.",escape:"Escape. Above about 11.2 km/s the ball leaves Earth for good."};
+    $("r1").textContent=msg[out];
+    if(anim)cancelAnimationFrame(anim);var k=reduce?path.length:1;
+    (function step(){draw1(k);if(k<path.length){k=Math.min(path.length,k+Math.ceil(path.length/120));anim=requestAnimationFrame(step)}})();
+  }
+  function draw1(n){
+    var W=c1.width,H=c1.height,s=H/(RE*3.4),cx=W/2,cy=H/2;
+    x1.fillStyle=col("--paper");x1.fillRect(0,0,W,H);
+    x1.beginPath();x1.arc(cx,cy,RE*s,0,7);x1.fillStyle=col("--machine");x1.fill();
+    x1.beginPath();x1.moveTo(cx-6,cy-RE*s);x1.lineTo(cx,cy-(RE+h0)*s);x1.lineTo(cx+6,cy-RE*s);x1.fillStyle=col("--ink");x1.fill();
+    x1.beginPath();for(var i=0;i<n;i++){var p=path[i];x1[i?"lineTo":"moveTo"](cx+p[0]*s,cy-p[1]*s)}
+    x1.strokeStyle=col("--signal");x1.lineWidth=2.5;x1.stroke();
+    if(n){var q=path[n-1];x1.beginPath();x1.arc(cx+q[0]*s,cy-q[1]*s,5,0,7);x1.fillStyle=col("--signal");x1.fill()}
+  }
+  $("v1").addEventListener("input",fire);
+
+  // 2. Calculus
+  var c2=$("cv2"),x2=c2.getContext("2d");
+  function draw2(){
+    var n=+$("v2").value,W=c2.width,H=c2.height,pad=36,sx=(W-2*pad)/2,sy=(H-2*pad)/4,sum=0,dx=2/n;
+    $("v2o").textContent=n;
+    x2.fillStyle=col("--paper");x2.fillRect(0,0,W,H);
+    for(var i=0;i<n;i++){var xm=(i+0.5)*dx,h=xm*xm;sum+=h*dx;
+      x2.fillStyle=col("--line");x2.fillRect(pad+i*dx*sx,H-pad-h*sy,dx*sx,h*sy);
+      if(n<=40){x2.strokeStyle=col("--muted");x2.lineWidth=1;x2.strokeRect(pad+i*dx*sx,H-pad-h*sy,dx*sx,h*sy)}}
+    x2.beginPath();for(var j=0;j<=100;j++){var xx=j/50;x2[j?"lineTo":"moveTo"](pad+xx*sx,H-pad-xx*xx*sy)}
+    x2.strokeStyle=col("--signal");x2.lineWidth=3;x2.stroke();
+    x2.strokeStyle=col("--ink");x2.lineWidth=1.5;x2.beginPath();x2.moveTo(pad,pad/2);x2.lineTo(pad,H-pad);x2.lineTo(W-pad/2,H-pad);x2.stroke();
+    x2.fillStyle=col("--muted");x2.font="12px "+col("--mono");x2.fillText("0",pad-4,H-pad+16);x2.fillText("2",pad+2*sx-4,H-pad+16);x2.fillText("y = x²",pad+1.3*sx,H-pad-1.9*sy);
+    var err=Math.abs(sum-8/3);
+    $("r2").textContent="Sum of "+n+" rectangle"+(n>1?"s":"")+": "+sum.toFixed(5)+"   Exact: 2.66667   Off by "+err.toFixed(5);
+  }
+  $("v2").addEventListener("input",draw2);
+
+  // 3. Relativity
+  var c3=$("cv3"),x3=c3.getContext("2d"),tE=0,last=null;
+  function gamma(){var v=+$("v3").value;return 1/Math.sqrt(1-v*v)}
+  function label3(){var v=+$("v3").value,g=gamma();$("v3o").textContent=Math.round(v*1000)/10+"% of c";
+    $("r3").textContent="1 year on the ship = "+(g<10?g.toFixed(2):g.toFixed(1))+" years on Earth"}
+  function clock(cx,cy,r,t,name){
+    x3.beginPath();x3.arc(cx,cy,r,0,7);x3.fillStyle=col("--card");x3.fill();x3.strokeStyle=col("--ink");x3.lineWidth=2;x3.stroke();
+    for(var k=0;k<12;k++){var a=k/12*6.283;x3.beginPath();x3.moveTo(cx+Math.sin(a)*r*.82,cy-Math.cos(a)*r*.82);x3.lineTo(cx+Math.sin(a)*r*.95,cy-Math.cos(a)*r*.95);x3.stroke()}
+    var a2=(t%60)/60*6.283;x3.beginPath();x3.moveTo(cx,cy);x3.lineTo(cx+Math.sin(a2)*r*.8,cy-Math.cos(a2)*r*.8);x3.strokeStyle=col("--signal");x3.lineWidth=3;x3.stroke();
+    x3.fillStyle=col("--ink");x3.font="600 13px "+col("--mono");x3.textAlign="center";x3.fillText(name,cx,cy+r+22);
+  }
+  function draw3(ts){
+    if(last!==null&&!reduce)tE+=(ts-last)/1000*6;last=ts;
+    var W=c3.width,H=c3.height;x3.fillStyle=col("--paper");x3.fillRect(0,0,W,H);
+    clock(W*0.28,H*0.42,80,tE,"Clock on Earth");clock(W*0.72,H*0.42,80,tE/gamma(),"Clock on the ship");
+    requestAnimationFrame(draw3);
+  }
+  $("v3").addEventListener("input",label3);
+
+  fire();draw2();label3();requestAnimationFrame(draw3);
+  if(window.matchMedia)matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){fire();draw2()});
+})();
+</script>
+</body>
+</html>
