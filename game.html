@@ -11,7 +11,7 @@
 </head>
 <body>
 <style>
-.qz{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.25rem}
+.qz{background:var(--card);border:0;border-radius:24px;box-shadow:0 4px 24px rgba(80,60,40,.08);padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.25rem}
 .qhead{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .qtext{font:600 clamp(1.15rem,2.4vw,1.45rem)/1.4 var(--body);max-width:60ch}
 .opts{display:grid;gap:.6rem}
@@ -24,7 +24,7 @@
 .verse{font:400 clamp(1.1rem,2.4vw,1.35rem)/1.7 var(--body);white-space:pre-line;border-left:3px solid var(--line);padding-left:1.2rem;max-width:40ch}
 </style>
 <div class="wrap">
-  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">The test</a><a href="claude.html">Meet Claude</a><a href="quiz.html">Prove you&#39;re human</a><a href="game.html" aria-current="page">Human or machine?</a><a href="captcha.html">CAPTCHA gauntlet</a><a href="cryptic.html">Cryptic clues</a><a href="rules.html">Rule stack</a><a href="last.html">The last human</a><a href="firsts.html">Human firsts</a></nav></header>
+  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">Home</a><a href="games.html" aria-current="page">Games</a><a href="firsts.html">Human firsts</a><a href="claude.html">Meet Claude</a></nav></header>
   <section class="hero" aria-labelledby="h1">
     <p class="label">Game · Human or machine?</p>
     <h1 id="h1">Poet or <em>program?</em></h1>
@@ -63,7 +63,7 @@
     var v=V[i],ok=(h===v.h); if(ok)score++;
     $(v.h?"optH":"optM").classList.add("right"); if(!ok)$(h?"optH":"optM").classList.add("wrong");
     $("optH").disabled=$("optM").disabled=true;
-    $("qtag").textContent=ok?"Correct":"Fooled"; $("qtag").className="tag "+(ok?"ok":"no");
+    $("qtag").textContent=ok?"Well spotted":"Tricky one"; $("qtag").className="tag "+(ok?"ok":"no");
     $("qwhy").textContent=v.c; $("qr").hidden=false; $("qs").textContent="Score "+score;
     $("qnext").textContent=i<V.length-1?"Next verse":"See my result"; $("qnext").hidden=false;
   }
@@ -73,8 +73,8 @@
     if(i<V.length-1){i++;show();return}
     $("qt").hidden=true;$("qo").hidden=true;$("qr").hidden=true;$("qfinal").textContent=score+" / "+V.length;
     var v,l; if(score===V.length){v="A true critic.";l="You can tell a poet from a program. For now."}
-    else if(score>=4){v="Mostly right.";l="The machine fooled you once or twice. It will get better at that. Will you?"}
-    else{v="The machine passed.";l="By your judgement, Claude is a poet. It would like that on its CV."}
+    else if(score>=4){v="Mostly right.";l="A couple caught you out. Machines learned rhythm and rhyme from human poets, so the line between them is getting thin."}
+    else{v="Hard to tell, isn't it?";l="By your judgement, Claude is a poet. Machines learned to write by reading the people who wrote these classics."}
     $("qverdict").textContent=v;$("qline").textContent=l;$("qend").hidden=false;$("qnext").textContent="Play again";
   });
   show();

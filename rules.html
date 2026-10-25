@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<style>.box{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.1rem}
+<style>.box{background:var(--card);border:0;border-radius:24px;box-shadow:0 4px 24px rgba(80,60,40,.08);padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.1rem}
 .prompt{font:400 clamp(1.2rem,2.6vw,1.5rem)/1.4 var(--body);max-width:45ch}
 .box textarea,.box input[type=text]{font:400 1.05rem/1.5 var(--body);padding:.8rem;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:3px;width:100%}
 .checks{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
@@ -28,14 +28,14 @@
 .total{font:900 clamp(2.4rem,6vw,3.6rem)/1 var(--display);font-stretch:75%;color:var(--signal);font-variant-numeric:tabular-nums}
 @media (max-width:30rem){.bar{grid-template-columns:6rem 1fr 2.2rem}}</style>
 <div class="wrap">
-  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">The test</a><a href="claude.html">Meet Claude</a><a href="quiz.html">Prove you&#39;re human</a><a href="game.html">Human or machine?</a><a href="captcha.html">CAPTCHA gauntlet</a><a href="cryptic.html">Cryptic clues</a><a href="rules.html" aria-current="page">Rule stack</a><a href="last.html">The last human</a><a href="firsts.html">Human firsts</a></nav></header>
+  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">Home</a><a href="games.html" aria-current="page">Games</a><a href="firsts.html">Human firsts</a><a href="claude.html">Meet Claude</a></nav></header>
   <section class="hero" aria-labelledby="h1"><p class="label">Game · The rule stack</p><h1 id="h1">Seven words. <em>Five rules.</em></h1><p class="lede">Answer each question in exactly seven words. Every level adds a rule, and the old rules stay. Machines track all of them without effort. People start sweating around level three.</p></section>
   <section><h2 class="label">Level <span id="lv">1</span> of 5</h2>
 <div class="box">
   <p class="prompt" id="rp"></p>
   <input type="text" id="ri" autocomplete="off" aria-label="Your seven words">
   <ul class="checks" id="rc"></ul>
-  <div class="btns"><button type="button" id="rgo" disabled>Submit</button><button type="button" id="rshow">Show Claude's answer</button></div>
+  <div class="btns"><button type="button" id="rgo" disabled>Submit</button><button type="button" id="rshow">Show Claude's answer</button><button type="button" id="rskip">Skip this level</button></div>
   <div class="example" id="rex" hidden><span class="label">Claude's answer</span><q id="rexq"></q></div>
   <div class="result" id="rdone" hidden><span class="tag ok" id="rtag"></span><p id="rmsg"></p></div>
 </div></section>
@@ -52,7 +52,7 @@ var L=[
  {p:"Describe your dream job.",n:5,ex:"Running 9 tiny zoos with happy koalas"}
 ];
 var names=["Exactly 7 words","Includes a number written as digits","No letter E anywhere","No word you've used in an earlier answer","Every word starts with a different letter"];
-var lv=0,used={};
+var lv=0,used={},cleared=0;
 function words(t){return t.trim().split(/\s+/).filter(Boolean)}
 function clean(w){return w.toLowerCase().replace(/[^a-z0-9]/g,"")}
 function test(t){
@@ -77,13 +77,17 @@ function show(){
 $("ri").addEventListener("input",draw);
 $("rshow").addEventListener("click",function(){$("rexq").textContent=L[lv].ex;$("rex").hidden=false});
 $("rgo").addEventListener("click",function(){
-  if($("rgo").textContent==="Play again"){lv=0;used={};show();return}
-  words($("ri").value).map(clean).forEach(function(x){if(x)used[x]=1});
-  if(lv<L.length-1){lv++;show();return}
-  $("ri").disabled=true;$("rtag").textContent="All five levels cleared";
-  $("rmsg").textContent="Impressive. You followed five stacked rules without a slip, which is a very machine-like thing to do. Are you sure you're human?";
-  $("rdone").hidden=false;$("rgo").textContent="Play again";$("rgo").disabled=false;
+  if($("rgo").textContent==="Play again"){lv=0;used={};cleared=0;$("rskip").hidden=false;$("rshow").hidden=false;show();return}
+  words($("ri").value).map(clean).forEach(function(x){if(x)used[x]=1});cleared++;
+  next();
 });
+$("rskip").addEventListener("click",function(){next()});
+function next(){
+  if(lv<L.length-1){lv++;show();return}
+  $("ri").disabled=true;$("rskip").hidden=true;$("rshow").hidden=true;$("rtag").textContent=cleared+" of 5 levels cleared";
+  $("rmsg").textContent=cleared===5?"Impressive. Five stacked rules without a slip. Machines find this easy; people who manage it should feel proud.":cleared>=3?"Well played. Juggling that many rules at once is genuinely hard for a human brain.":"Tough, isn't it? Keeping five rules in your head at once is where machines shine, and why they make handy helpers.";
+  $("rdone").hidden=false;$("rgo").textContent="Play again";$("rgo").disabled=false;
+}
 show();
 })();
 </script>

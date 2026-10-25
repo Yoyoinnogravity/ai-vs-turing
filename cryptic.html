@@ -11,7 +11,7 @@
 </head>
 <body>
 <style>
-.cc{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.1rem}
+.cc{background:var(--card);border:0;border-radius:24px;box-shadow:0 4px 24px rgba(80,60,40,.08);padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.1rem}
 .clue{font:400 clamp(1.3rem,3vw,1.75rem)/1.35 var(--body);max-width:40ch}
 .clue em{font-style:normal;color:var(--muted);font-family:var(--mono);font-size:.8em}
 .ans{display:flex;gap:.6rem;flex-wrap:wrap}
@@ -20,7 +20,7 @@
 .btns{display:flex;gap:.6rem;flex-wrap:wrap}
 </style>
 <div class="wrap">
-  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">The test</a><a href="claude.html">Meet Claude</a><a href="quiz.html">Prove you&#39;re human</a><a href="game.html">Human or machine?</a><a href="captcha.html">CAPTCHA gauntlet</a><a href="cryptic.html" aria-current="page">Cryptic clues</a><a href="rules.html">Rule stack</a><a href="last.html">The last human</a><a href="firsts.html">Human firsts</a></nav></header>
+  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">Home</a><a href="games.html" aria-current="page">Games</a><a href="firsts.html">Human firsts</a><a href="claude.html">Meet Claude</a></nav></header>
   <section class="hero" aria-labelledby="h1">
     <p class="label">Game · Cryptic clues</p>
     <h1 id="h1">Think like a <em>setter.</em></h1>
@@ -32,6 +32,7 @@
       <p class="clue" id="kc"></p>
       <form class="ans" id="kf"><input type="text" id="ki" autocomplete="off" aria-label="Your answer"><button type="submit">Check</button></form>
       <p class="hintline" id="kh" hidden></p>
+      <div class="end" id="kend" hidden><span class="label">Your result</span><span class="big" id="kfinal"></span><h3 id="kverdict"></h3><p id="kline"></p></div>
       <div class="result" id="kr" hidden><span class="tag" id="kt"></span><p id="kw"></p></div>
       <div class="btns"><button type="button" id="khint">Hint</button><button type="button" id="kreveal">Reveal</button><button type="button" id="knext" hidden>Next clue</button></div>
     </div>
@@ -58,7 +59,7 @@
     var k=K[i];done=true;if(ok)score++;$("ks").textContent=score;
     $("kt").textContent=ok?"Solved":"The answer is "+k.a;$("kt").className="tag "+(ok?"ok":"no");
     $("kw").textContent=k.w;$("kr").hidden=false;$("ki").disabled=true;$("khint").disabled=true;$("kreveal").disabled=true;
-    $("knext").textContent=i<K.length-1?"Next clue":"Start again ("+score+" of 5 solved)";$("knext").hidden=false;
+    $("knext").textContent=i<K.length-1?"Next clue":"See my result";$("knext").hidden=false;
   }
   $("kf").addEventListener("submit",function(e){
     e.preventDefault();if(done)return;
@@ -67,7 +68,15 @@
   });
   $("khint").addEventListener("click",function(){$("kh").textContent=K[i].h;$("kh").hidden=false});
   $("kreveal").addEventListener("click",function(){finish(false)});
-  $("knext").addEventListener("click",function(){if(i<K.length-1)i++;else{i=0;score=0;$("ks").textContent=0}show()});
+  $("knext").addEventListener("click",function(){
+    if(!$("kend").hidden){i=0;score=0;$("ks").textContent=0;$("kend").hidden=true;$("kc").hidden=false;$("kf").hidden=false;$("khint").hidden=false;$("kreveal").hidden=false;show();return}
+    if(i<K.length-1){i++;show();return}
+    $("kc").hidden=true;$("kf").hidden=true;$("kh").hidden=true;$("kr").hidden=true;$("khint").hidden=true;$("kreveal").hidden=true;
+    $("kfinal").textContent=score+" / "+K.length;
+    var v,l;if(score===K.length){v="A born setter.";l="Every clue cracked. That sideways leap is something people have enjoyed in newspapers for a hundred years."}
+    else if(score>=3){v="Nicely solved.";l="You've got the knack. Most cryptic fans started exactly here, one clue at a time."}
+    else{v="Welcome to cryptics.";l="Everyone finds these baffling at first. Now you know the tricks: anagrams, hidden words, reversals and double meanings."}
+    $("kverdict").textContent=v;$("kline").textContent=l;$("kend").hidden=false;$("knext").textContent="Play again"});
   show();
 })();
 </script>

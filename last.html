@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<style>.box{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.1rem}
+<style>.box{background:var(--card);border:0;border-radius:24px;box-shadow:0 4px 24px rgba(80,60,40,.08);padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.1rem}
 .prompt{font:400 clamp(1.2rem,2.6vw,1.5rem)/1.4 var(--body);max-width:45ch}
 .box textarea,.box input[type=text]{font:400 1.05rem/1.5 var(--body);padding:.8rem;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:3px;width:100%}
 .checks{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
@@ -28,8 +28,8 @@
 .total{font:900 clamp(2.4rem,6vw,3.6rem)/1 var(--display);font-stretch:75%;color:var(--signal);font-variant-numeric:tabular-nums}
 @media (max-width:30rem){.bar{grid-template-columns:6rem 1fr 2.2rem}}</style>
 <div class="wrap">
-  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">The test</a><a href="claude.html">Meet Claude</a><a href="quiz.html">Prove you&#39;re human</a><a href="game.html">Human or machine?</a><a href="captcha.html">CAPTCHA gauntlet</a><a href="cryptic.html">Cryptic clues</a><a href="rules.html">Rule stack</a><a href="last.html" aria-current="page">The last human</a><a href="firsts.html">Human firsts</a></nav></header>
-  <section class="hero" aria-labelledby="h1"><p class="label">Game · The last human</p><h1 id="h1">Prove you're the <em>last human.</em></h1><p class="lede">Everyone is now assumed to be an AI. To prove otherwise, intelligence won't help, and nor will knowledge. Only memories, the senses, doubt and contradiction count. Answer four questions and let the judge decide.</p></section>
+  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">Home</a><a href="games.html" aria-current="page">Games</a><a href="firsts.html">Human firsts</a><a href="claude.html">Meet Claude</a></nav></header>
+  <section class="hero" aria-labelledby="h1"><p class="label">Game · The last human</p><h1 id="h1">Prove you're the <em>last human.</em></h1><p class="lede">Imagine a world where everyone online is assumed to be an AI. To prove otherwise, intelligence won't help, and nor will knowledge. Only memories, the senses, doubt and contradiction count. Answer four questions and let the judge decide.</p></section>
   <section><h2 class="label">Question <span id="qn">1</span> of 4</h2>
 <div class="box">
   <p class="prompt" id="qp"></p>
@@ -65,18 +65,26 @@ function score(t){
   var spec=Math.min(25,nums*10+names*5), sen=Math.min(25,count(sens,t)*9), dbt=Math.min(20,count(doubt,t)*10), msy=Math.min(15,count(mess,t)*5), len=Math.min(15,Math.round(n/40*15));
   return {"Specific details":[spec,25],"The senses":[sen,25],"Doubt":[dbt,20],"Mess":[msy,15],"Length":[len,15],total:spec+sen+dbt+msy+len};
 }
-var i=0;
+var i=0,tot=0,ctot=0;
 function bars(s){var h="";Object.keys(s).forEach(function(k){if(k==="total")return;var v=s[k];h+='<div class="bar"><span>'+k+'</span><span class="track"><span class="fill" style="width:'+(v[0]/v[1]*100)+'%"></span></span><span>'+v[0]+'</span></div>'});return h}
-function show(){$("qn").textContent=i+1;$("qp").textContent=Q[i].p;$("qa").value="";$("qres").hidden=true;$("qnext").hidden=true;$("qj").disabled=false}
+function show(){$("qcl").parentNode.hidden=false;$("qn").textContent=i+1;$("qp").textContent=Q[i].p;$("qa").value="";$("qres").hidden=true;$("qnext").hidden=true;$("qj").disabled=false}
 $("qj").addEventListener("click",function(){
   var t=$("qa").value.trim();if(!t){$("qa").focus();return}
-  var s=score(t),c=score(Q[i].c);
+  if($("qnext").hidden===false)return;var s=score(t),c=score(Q[i].c);tot+=s.total;ctot+=c.total;
   $("qbars").innerHTML=bars(s);$("qtot").textContent=s.total;
   $("qverdict").textContent=s.total>=70?"Verdict: human. Messy, specific and unsure of yourself, which is exactly right.":s.total>=40?"Verdict: probably human. Add a smell, a doubt or an oddly exact detail to be sure.":"Verdict: suspiciously tidy. That answer could have come from a machine.";
   $("qcl").textContent=Q[i].c;$("qcs").textContent=c.total+(c.total>s.total?", higher than you":"");
-  $("qres").hidden=false;$("qnext").hidden=false;$("qnext").textContent=i<Q.length-1?"Next question":"Start again";
+  $("qres").hidden=false;$("qnext").hidden=false;$("qnext").textContent=i<Q.length-1?"Next question":"See my result";
 });
-$("qnext").addEventListener("click",function(){i=i<Q.length-1?i+1:0;show()});
+$("qnext").addEventListener("click",function(){
+  if($("qnext").textContent==="Play again"){i=0;tot=0;ctot=0;$("qa").hidden=false;$("qj").hidden=false;show();return}
+  if(i<Q.length-1){i++;show();return}
+  var avg=Math.round(tot/Q.length),cavg=Math.round(ctot/Q.length);
+  $("qp").textContent="Your result";$("qa").hidden=true;$("qj").hidden=true;$("qbars").innerHTML="";
+  $("qtot").textContent=avg;
+  $("qverdict").textContent=(avg>=60?"The judge is convinced: you are human. Your memories are full of smells, doubts and odd little details no machine has lived through.":avg>=35?"Probably human. Next time, add the smell of the room or the thing you're still not sure about.":"The judge isn't sure yet. Real memories are messy, so don't tidy them up.")+" Claude averaged "+cavg+". It can imitate a memory, but it has never stood in your nan's hallway.";
+  $("qcl").parentNode.hidden=true;$("qnext").textContent="Play again";
+});
 show();
 })();
 </script>
