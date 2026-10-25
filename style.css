@@ -125,3 +125,7 @@ html{scroll-behavior:smooth}
 .hub a:hover{border-color:var(--signal)}
 .hub p{color:var(--muted);font-size:.98rem}
 .hub .go{color:var(--signal);font-weight:600;font-size:.9rem}
+
+/* the "keep going" buttons in each game stand out from the rest */
+#next,#qnext,#knext,#cgo,#rgo,#qj{background:var(--signal);border-color:var(--signal);color:#fff}
+#next:hover:not(:disabled),#qnext:hover:not(:disabled),#knext:hover:not(:disabled),#cgo:hover:not(:disabled),#rgo:hover:not(:disabled),#qj:hover:not(:disabled){background:var(--signal);filter:brightness(1.08)}

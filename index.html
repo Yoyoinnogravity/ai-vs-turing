@@ -177,6 +177,7 @@
     $("score").textContent="Score "+right+" / "+played;
     $("next").hidden=false;
     $("next").textContent = i<rounds.length-1 ? "Next round" : "Play again";
+    $("next").scrollIntoView({block:"nearest",behavior:"smooth"});
     var f=$("final");
     if(i===rounds.length-1){
       var v=right>=9?"Brilliant. You have a great ear for people.":right>=6?"Lovely work. A few were very hard to call.":right>=4?"Right in the middle, just like most judges.":"These were hard! You scored like the judges in the 2025 study.";
