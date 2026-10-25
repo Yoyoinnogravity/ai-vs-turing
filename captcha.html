@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Five checks to prove you are not a robot. Nobody has ever passed.">
+<title>CAPTCHA Gauntlet · AI vs Turing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<style>
+.cap-box{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.1rem;max-width:34rem}
+.cap-top{background:var(--machine);color:var(--paper);padding:1rem 1.1rem;border-radius:3px;display:grid;gap:.2rem}
+.cap-top b{font:800 1.3rem/1.2 var(--display);font-stretch:85%}
+.cap-top span{font:400 .9rem/1.4 var(--body)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.tile{aspect-ratio:1;max-width:100%;border:2px solid var(--line);background:var(--paper);border-radius:2px;display:grid;place-items:center;cursor:pointer;padding:.3rem;font:600 .8rem/1.2 var(--mono);color:var(--ink);text-transform:none;letter-spacing:0;text-align:center}
+.tile.on{border-color:var(--signal);box-shadow:inset 0 0 0 3px var(--signal)}
+.tile:hover{background:var(--card)}
+.light{display:grid;gap:3px;background:var(--ink);padding:5px 7px;border-radius:5px}
+.light i{width:12px;height:12px;border-radius:50%;display:block;background:var(--muted)}
+.light i:first-child{background:var(--bad)} .light i:last-child{background:var(--good)}
+.half{clip-path:inset(0 0 0 62%)}
+.warp{font:700 2rem/1 var(--display);font-stretch:70%;letter-spacing:.18em;transform:skew(-14deg) rotate(-4deg);filter:blur(.6px);text-align:center;padding:1rem;background:repeating-linear-gradient(45deg,var(--card),var(--card) 6px,var(--line) 6px,var(--line) 7px);user-select:none}
+.cap-box input[type=text]{font:400 1rem var(--mono);padding:.7rem;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:3px;width:100%}
+.chk{display:flex;gap:.8rem;align-items:center;font:600 1.05rem var(--body);border:1px solid var(--line);padding:1rem;border-radius:3px;background:var(--paper)}
+.chk input{width:1.6rem;height:1.6rem;accent-color:var(--signal)}
+.verdict-line{font:700 1.05rem/1.4 var(--body);color:var(--bad)}
+.row{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;justify-content:space-between}
+</style>
+<div class="wrap">
+  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">The test</a><a href="claude.html">Meet Claude</a><a href="quiz.html">Prove you&#39;re human</a><a href="game.html">Human or machine?</a><a href="captcha.html" aria-current="page">CAPTCHA gauntlet</a><a href="cryptic.html">Cryptic clues</a><a href="rules.html">Rule stack</a><a href="last.html">The last human</a></nav></header>
+  <section class="hero" aria-labelledby="h1">
+    <p class="label">Game · The CAPTCHA gauntlet</p>
+    <h1 id="h1">Prove you're <em>not a robot.</em></h1>
+    <p class="lede">Five checks stand between you and the rest of the internet. They were designed by humans, to keep out machines. Let's see how a human gets on.</p>
+  </section>
+  <section aria-labelledby="go">
+    <h2 id="go" class="label">Check <span id="cn">1</span> of 5</h2>
+    <div class="cap-box">
+      <div class="cap-top"><b id="ct"></b><span id="cs"></span></div>
+      <div id="stage"></div>
+      <p class="verdict-line" id="cv" hidden></p>
+      <div class="row"><span class="note" id="cnote"></span><button type="button" id="cgo">Verify</button></div>
+    </div>
+  </section>
+  <footer><span class="brand">AI <span>vs</span> Turing</span><span class="label">ai-vs-turing.com</span><p class="disclaimer">An independent showcase. Not affiliated with or endorsed by Anthropic. Claude is a product of <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>.</p></footer>
+</div>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)},step=0,phase="ask";
+  var L='<span class="light"><i></i><i></i><i></i></span>';
+  var C=[
+    {t:"Select all squares with traffic lights",s:"If there are none, click Verify.",
+      html:function(){var c=[1,0,0,1,0,2,0,0,0],h='<div class="tiles">';c.forEach(function(v,k){h+='<button type="button" class="tile" data-k="'+k+'">'+(v===1?L:v===2?'<span class="half">'+L+'</span>':'')+'</button>'});return h+'</div>'},
+      fail:"Incorrect. Square 6 contains 38% of a traffic light. Humans keep missing it."},
+    {t:"Type the word you see",s:"Letters are case-sensitive.",
+      html:function(){return '<div class="warp" aria-label="Distorted word">cIear</div><input type="text" id="cin" autocomplete="off" aria-label="Type the word">'},
+      fail:"Incorrect. The second letter was a capital I, not a lower-case l. Obviously."},
+    {t:"Select all squares with a bicycle",s:"Use your best judgement.",
+      html:function(){var w=["bicycle","unicycle","tandem","a bicycle's shadow","bicycle (disassembled)","exercise bike","motorbike","penny-farthing","a picture of a bicycle"],h='<div class="tiles">';w.forEach(function(t,k){h+='<button type="button" class="tile" data-k="'+k+'">'+t+'</button>'});return h+'</div>'},
+      fail:"Your answer has been sent to a panel of philosophers. They are still arguing. Please continue."},
+    {t:"Confirm you are human",s:"Tick the box.",
+      html:function(){return '<label class="chk"><input type="checkbox" id="cbox"> I am not a robot</label>'},
+      fail:"Interesting. That is exactly what a robot would say."},
+    {t:"Final check: click Verify within 0.4 seconds",s:"Machines manage this easily. The timer starts now.",
+      html:function(){window.__t=Date.now();return '<p class="note">Go.</p>'},
+      fail:function(){var ms=Date.now()-window.__t;return "You took "+(ms/1000).toFixed(2)+" seconds. Even allowing for reading this, that is suspiciously slow for a machine."}}
+  ];
+  function show(){
+    var c=C[step];phase="ask";$("cn").textContent=step+1;$("ct").textContent=c.t;$("cs").textContent=c.s;
+    $("stage").innerHTML=c.html();$("cv").hidden=true;$("cgo").textContent="Verify";$("cnote").textContent="";
+    Array.prototype.forEach.call(document.querySelectorAll(".tile"),function(b){b.addEventListener("click",function(){b.classList.toggle("on")})});
+  }
+  function end(){
+    phase="end";$("cn").textContent="5";$("ct").textContent="Result: probably human";
+    $("cs").textContent="Confidence: 51%";
+    $("stage").innerHTML='<p>You failed all five checks. Congratulations: CAPTCHAs work by spotting behaviour that is slow, hesitant and a little confused, so failing them is the most human thing you could have done.</p>';
+    $("cv").hidden=true;$("cnote").textContent="Access to the internet: granted, reluctantly.";$("cgo").textContent="Try again";
+  }
+  $("cgo").addEventListener("click",function(){
+    if(phase==="end"){step=0;show();return}
+    if(phase==="ask"){var f=C[step].fail;$("cv").textContent=typeof f==="function"?f():f;$("cv").hidden=false;phase="told";$("cgo").textContent=step<4?"Next check":"See result";return}
+    if(step<4){step++;show()}else end();
+  });
+  show();
+})();
+</script>
+</body>
+</html>

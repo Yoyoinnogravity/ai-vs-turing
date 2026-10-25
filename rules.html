@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Answer in exactly seven words while the rules pile up. Easy for a machine, maddening for a person.">
+<title>Rule Stack · AI vs Turing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<style>.box{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.1rem}
+.prompt{font:400 clamp(1.2rem,2.6vw,1.5rem)/1.4 var(--body);max-width:45ch}
+.box textarea,.box input[type=text]{font:400 1.05rem/1.5 var(--body);padding:.8rem;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:3px;width:100%}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.checks li{font:600 .9rem/1.4 var(--mono);display:flex;gap:.6rem}
+.checks li::before{content:"·";width:1.2rem;text-align:center;color:var(--muted)}
+.checks li.ok{color:var(--good)} .checks li.ok::before{content:"✓"}
+.checks li.no{color:var(--bad)} .checks li.no::before{content:"✗"}
+.example{border-left:3px solid var(--machine);padding-left:1rem;display:grid;gap:.3rem}
+.example q{font:400 1.05rem/1.5 var(--body);quotes:none}
+.btns{display:flex;gap:.6rem;flex-wrap:wrap}
+.bars{display:grid;gap:.5rem}
+.bar{display:grid;grid-template-columns:8rem 1fr 2.5rem;gap:.6rem;align-items:center;font:600 .82rem var(--mono)}
+.bar span.track{height:10px;background:var(--line);border-radius:5px;overflow:hidden;display:block}
+.bar span.fill{height:100%;background:var(--signal);display:block;width:0}
+.total{font:900 clamp(2.4rem,6vw,3.6rem)/1 var(--display);font-stretch:75%;color:var(--signal);font-variant-numeric:tabular-nums}
+@media (max-width:30rem){.bar{grid-template-columns:6rem 1fr 2.2rem}}</style>
+<div class="wrap">
+  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">The test</a><a href="claude.html">Meet Claude</a><a href="quiz.html">Prove you&#39;re human</a><a href="game.html">Human or machine?</a><a href="captcha.html">CAPTCHA gauntlet</a><a href="cryptic.html">Cryptic clues</a><a href="rules.html" aria-current="page">Rule stack</a><a href="last.html">The last human</a></nav></header>
+  <section class="hero" aria-labelledby="h1"><p class="label">Game · The rule stack</p><h1 id="h1">Seven words. <em>Five rules.</em></h1><p class="lede">Answer each question in exactly seven words. Every level adds a rule, and the old rules stay. Machines track all of them without effort. People start sweating around level three.</p></section>
+  <section><h2 class="label">Level <span id="lv">1</span> of 5</h2>
+<div class="box">
+  <p class="prompt" id="rp"></p>
+  <input type="text" id="ri" autocomplete="off" aria-label="Your seven words">
+  <ul class="checks" id="rc"></ul>
+  <div class="btns"><button type="button" id="rgo" disabled>Submit</button><button type="button" id="rshow">Show Claude's answer</button></div>
+  <div class="example" id="rex" hidden><span class="label">Claude's answer</span><q id="rexq"></q></div>
+  <div class="result" id="rdone" hidden><span class="tag ok" id="rtag"></span><p id="rmsg"></p></div>
+</div></section>
+  <footer><span class="brand">AI <span>vs</span> Turing</span><span class="label">ai-vs-turing.com</span><p class="disclaimer">An independent showcase. Not affiliated with or endorsed by Anthropic. Claude is a product of <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>.</p></footer>
+</div>
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)};
+var L=[
+ {p:"Describe your morning.",n:1,ex:"Woke up late and burned the toast."},
+ {p:"What did you drink today?",n:2,ex:"I drank 2 coffees before work today."},
+ {p:"Describe your favourite food.",n:3,ex:"3 big bowls of hot spicy pasta"},
+ {p:"Describe your ideal holiday.",n:4,ex:"4 days lazing on sandy Thai islands"},
+ {p:"Describe your dream job.",n:5,ex:"Running 9 tiny zoos with happy koalas"}
+];
+var names=["Exactly 7 words","Includes a number written as digits","No letter E anywhere","No word you've used in an earlier answer","Every word starts with a different letter"];
+var lv=0,used={};
+function words(t){return t.trim().split(/\s+/).filter(Boolean)}
+function clean(w){return w.toLowerCase().replace(/[^a-z0-9]/g,"")}
+function test(t){
+  var w=words(t),c=w.map(clean).filter(Boolean),r=[];
+  r.push(w.length===7);
+  r.push(/[0-9]/.test(t));
+  r.push(!/e/i.test(t));
+  r.push(c.every(function(x){return !used[x]}));
+  var firsts=c.filter(function(x){return /^[a-z]/.test(x)}).map(function(x){return x[0]});
+  r.push(new Set(firsts).size===firsts.length);
+  return r.slice(0,L[lv].n);
+}
+function draw(){
+  var r=test($("ri").value),h="";
+  r.forEach(function(ok,k){h+='<li class="'+($("ri").value.trim()?(ok?"ok":"no"):"")+'">'+names[k]+'</li>'});
+  $("rc").innerHTML=h;$("rgo").disabled=!r.every(Boolean);
+}
+function show(){
+  $("lv").textContent=lv+1;$("rp").textContent=L[lv].p+" Use exactly seven words.";$("ri").value="";$("ri").disabled=false;
+  $("rex").hidden=true;$("rdone").hidden=true;$("rgo").textContent="Submit";draw();
+}
+$("ri").addEventListener("input",draw);
+$("rshow").addEventListener("click",function(){$("rexq").textContent=L[lv].ex;$("rex").hidden=false});
+$("rgo").addEventListener("click",function(){
+  if($("rgo").textContent==="Play again"){lv=0;used={};show();return}
+  words($("ri").value).map(clean).forEach(function(x){if(x)used[x]=1});
+  if(lv<L.length-1){lv++;show();return}
+  $("ri").disabled=true;$("rtag").textContent="All five levels cleared";
+  $("rmsg").textContent="Impressive. You followed five stacked rules without a slip, which is a very machine-like thing to do. Are you sure you're human?";
+  $("rdone").hidden=false;$("rgo").textContent="Play again";$("rgo").disabled=false;
+});
+show();
+})();
+</script>
+</body>
+</html>

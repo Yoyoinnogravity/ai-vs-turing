@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Six short verses. Some by famous poets, some by Claude. Can you tell which?">
+<title>Human or Machine · AI vs Turing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<style>
+.qz{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.25rem}
+.qhead{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.qtext{font:600 clamp(1.15rem,2.4vw,1.45rem)/1.4 var(--body);max-width:60ch}
+.opts{display:grid;gap:.6rem}
+.opts button{text-align:left;text-transform:none;letter-spacing:0;font:400 1rem/1.4 var(--mono);padding:.9rem 1rem;background:var(--paper)}
+.opts button.right{border-color:var(--good);color:var(--good)}
+.opts button.wrong{border-color:var(--bad);color:var(--bad)}
+.opts button:disabled{opacity:1}
+.end{display:grid;gap:.8rem}
+.end .big{color:var(--signal)}
+.verse{font:400 clamp(1.1rem,2.4vw,1.35rem)/1.7 var(--body);white-space:pre-line;border-left:3px solid var(--line);padding-left:1.2rem;max-width:40ch}
+</style>
+<div class="wrap">
+  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">The test</a><a href="claude.html">Meet Claude</a><a href="quiz.html">Prove you&#39;re human</a><a href="game.html" aria-current="page">Human or machine?</a><a href="captcha.html">CAPTCHA gauntlet</a><a href="cryptic.html">Cryptic clues</a><a href="rules.html">Rule stack</a><a href="last.html">The last human</a></nav></header>
+  <section class="hero" aria-labelledby="h1">
+    <p class="label">Game · Human or machine?</p>
+    <h1 id="h1">Poet or <em>program?</em></h1>
+    <p class="lede">Six short verses. Three are by famous poets, written more than a century ago. Three were written by Claude for this page, in about a second each. Decide who wrote which.</p>
+  </section>
+  <section aria-labelledby="go">
+    <h2 id="go" class="label">The game</h2>
+    <div class="qz">
+      <div class="qhead"><span class="label" id="qn"></span><span class="label" id="qs">Score 0</span></div>
+      <p class="verse" id="qt"></p>
+      <div class="opts" id="qo"><button type="button" id="optH">A human poet wrote this</button><button type="button" id="optM">A machine wrote this</button></div>
+      <div class="result" id="qr" hidden><span class="tag" id="qtag"></span><p id="qwhy"></p></div>
+      <div class="end" id="qend" hidden><span class="label">Your result</span><span class="big" id="qfinal"></span><h3 id="qverdict"></h3><p id="qline"></p></div>
+      <div class="foot"><span class="note">Poems by human poets are in the public domain.</span><button id="qnext" type="button" hidden>Next verse</button></div>
+    </div>
+  </section>
+  <footer><span class="brand">AI <span>vs</span> Turing</span><span class="label">ai-vs-turing.com</span><p class="disclaimer">An independent showcase. Not affiliated with or endorsed by Anthropic. Claude is a product of <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>.</p></footer>
+</div>
+<script>
+(function(){
+  var V=[
+    {t:"Hope is the thing with feathers\nThat perches in the soul,\nAnd sings the tune without the words,\nAnd never stops at all.",h:1,c:"Emily Dickinson, written around 1861."},
+    {t:"The kettle hums a borrowed tune\nit learned from someone's mother;\nit never quite remembers June\nbut sings it to another.",h:0,c:"Claude, written for this page."},
+    {t:"Yes. I remember Adlestrop—\nThe name, because one afternoon\nOf heat the express-train drew up there\nUnwontedly. It was late June.",h:1,c:"Edward Thomas, “Adlestrop”, published 1917."},
+    {t:"I kept the letter in a drawer\nwith buttons and a key;\nI never read it any more,\nit reads itself to me.",h:0,c:"Claude, written for this page."},
+    {t:"Nature's first green is gold,\nHer hardest hue to hold.\nHer early leaf's a flower;\nBut only so an hour.",h:1,c:"Robert Frost, “Nothing Gold Can Stay”, 1923."},
+    {t:"The tide comes in without a sound\nand takes the names we wrote;\nthe sea has never once been found\nto keep a single note.",h:0,c:"Claude, written for this page."}
+  ];
+  var i=0,score=0,$=function(id){return document.getElementById(id)};
+  function show(){
+    $("qn").textContent="Verse "+(i+1)+" of "+V.length; $("qt").textContent=V[i].t;
+    ["optH","optM"].forEach(function(id){var b=$(id);b.disabled=false;b.className=""});
+    $("qr").hidden=true;$("qnext").hidden=true;$("qend").hidden=true;$("qt").hidden=false;$("qo").hidden=false;
+  }
+  function pick(h){
+    var v=V[i],ok=(h===v.h); if(ok)score++;
+    $(v.h?"optH":"optM").classList.add("right"); if(!ok)$(h?"optH":"optM").classList.add("wrong");
+    $("optH").disabled=$("optM").disabled=true;
+    $("qtag").textContent=ok?"Correct":"Fooled"; $("qtag").className="tag "+(ok?"ok":"no");
+    $("qwhy").textContent=v.c; $("qr").hidden=false; $("qs").textContent="Score "+score;
+    $("qnext").textContent=i<V.length-1?"Next verse":"See my result"; $("qnext").hidden=false;
+  }
+  $("optH").addEventListener("click",function(){pick(1)}); $("optM").addEventListener("click",function(){pick(0)});
+  $("qnext").addEventListener("click",function(){
+    if(!$("qend").hidden){i=0;score=0;$("qs").textContent="Score 0";show();return}
+    if(i<V.length-1){i++;show();return}
+    $("qt").hidden=true;$("qo").hidden=true;$("qr").hidden=true;$("qfinal").textContent=score+" / "+V.length;
+    var v,l; if(score===V.length){v="A true critic.";l="You can tell a poet from a program. For now."}
+    else if(score>=4){v="Mostly right.";l="The machine fooled you once or twice. It will get better at that. Will you?"}
+    else{v="The machine passed.";l="By your judgement, Claude is a poet. It would like that on its CV."}
+    $("qverdict").textContent=v;$("qline").textContent=l;$("qend").hidden=false;$("qnext").textContent="Play again";
+  });
+  show();
+})();
+</script>
+</body>
+</html>

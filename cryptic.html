@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Five original cryptic crossword clues. The most human puzzle there is.">
+<title>Cryptic Clues · AI vs Turing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<style>
+.cc{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.1rem}
+.clue{font:400 clamp(1.3rem,3vw,1.75rem)/1.35 var(--body);max-width:40ch}
+.clue em{font-style:normal;color:var(--muted);font-family:var(--mono);font-size:.8em}
+.ans{display:flex;gap:.6rem;flex-wrap:wrap}
+.ans input{font:600 1.1rem var(--mono);letter-spacing:.2em;text-transform:uppercase;padding:.7rem;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:3px;flex:1 1 12rem;min-width:0}
+.hintline{color:var(--machine);font:600 .95rem/1.5 var(--mono)}
+.btns{display:flex;gap:.6rem;flex-wrap:wrap}
+</style>
+<div class="wrap">
+  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">The test</a><a href="claude.html">Meet Claude</a><a href="quiz.html">Prove you&#39;re human</a><a href="game.html">Human or machine?</a><a href="captcha.html">CAPTCHA gauntlet</a><a href="cryptic.html" aria-current="page">Cryptic clues</a><a href="rules.html">Rule stack</a><a href="last.html">The last human</a></nav></header>
+  <section class="hero" aria-labelledby="h1">
+    <p class="label">Game · Cryptic clues</p>
+    <h1 id="h1">Think like a <em>setter.</em></h1>
+    <p class="lede">A cryptic clue says one thing and means another. Every clue has a plain definition at one end and wordplay in the rest. Solving them takes the sideways thinking people are proud of. Machines are getting good at it too.</p>
+  </section>
+  <section aria-labelledby="go">
+    <h2 id="go" class="label">Clue <span id="kn">1</span> of 5 · Score <span id="ks">0</span></h2>
+    <div class="cc">
+      <p class="clue" id="kc"></p>
+      <form class="ans" id="kf"><input type="text" id="ki" autocomplete="off" aria-label="Your answer"><button type="submit">Check</button></form>
+      <p class="hintline" id="kh" hidden></p>
+      <div class="result" id="kr" hidden><span class="tag" id="kt"></span><p id="kw"></p></div>
+      <div class="btns"><button type="button" id="khint">Hint</button><button type="button" id="kreveal">Reveal</button><button type="button" id="knext" hidden>Next clue</button></div>
+    </div>
+    <p class="note">Clues written for this page by Claude. For daily clues by real human setters, with every one explained, visit <a href="https://www.fifteensquared.net" target="_blank" rel="noopener">Fifteen Squared</a>.</p>
+  </section>
+  <footer><span class="brand">AI <span>vs</span> Turing</span><span class="label">ai-vs-turing.com</span><p class="disclaimer">An independent showcase. Not affiliated with or endorsed by Anthropic. Claude is a product of <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>.</p></footer>
+</div>
+<script>
+(function(){
+  var K=[
+    {c:"Listen out, being quiet",n:"6",a:"SILENT",h:"“Out” tells you to rearrange the letters of the word before it.",w:"LISTEN rearranged (“out”) gives SILENT, meaning quiet."},
+    {c:"Vehicle with an animal companion goes on the floor",n:"6",a:"CARPET",h:"Build it in two pieces: a vehicle, then a companion animal.",w:"CAR (vehicle) + PET (animal companion) = CARPET, which goes on the floor."},
+    {c:"Celebrity returns as rodents",n:"4",a:"RATS",h:"“Returns” means read a word backwards.",w:"STAR (celebrity) written backwards gives RATS."},
+    {c:"Thinker found in cobra innards",n:"5",a:"BRAIN",h:"The answer is hidden, in order, inside the clue's own letters.",w:"Hidden in coBRA INnards. A brain is a thinker."},
+    {c:"Cricket equipment that flies at night",n:"3",a:"BAT",h:"Two definitions of the same word, side by side.",w:"A double definition: a cricket bat, and the bat that flies at night."}
+  ];
+  var i=0,score=0,done=false,$=function(id){return document.getElementById(id)};
+  function show(){
+    var k=K[i];done=false;$("kn").textContent=i+1;$("kc").innerHTML=k.c+" <em>("+k.n+")</em>";
+    $("ki").value="";$("ki").disabled=false;$("kh").hidden=true;$("kr").hidden=true;$("knext").hidden=true;
+    $("khint").disabled=false;$("kreveal").disabled=false;
+  }
+  function finish(ok){
+    var k=K[i];done=true;if(ok)score++;$("ks").textContent=score;
+    $("kt").textContent=ok?"Solved":"The answer is "+k.a;$("kt").className="tag "+(ok?"ok":"no");
+    $("kw").textContent=k.w;$("kr").hidden=false;$("ki").disabled=true;$("khint").disabled=true;$("kreveal").disabled=true;
+    $("knext").textContent=i<K.length-1?"Next clue":"Start again ("+score+" of 5 solved)";$("knext").hidden=false;
+  }
+  $("kf").addEventListener("submit",function(e){
+    e.preventDefault();if(done)return;
+    var v=$("ki").value.replace(/[^a-z]/gi,"").toUpperCase();if(!v)return;
+    if(v===K[i].a)finish(true);else{$("kh").textContent="Not quite. Try again, or take a hint.";$("kh").hidden=false;}
+  });
+  $("khint").addEventListener("click",function(){$("kh").textContent=K[i].h;$("kh").hidden=false});
+  $("kreveal").addEventListener("click",function(){finish(false)});
+  $("knext").addEventListener("click",function(){if(i<K.length-1)i++;else{i=0;score=0;$("ks").textContent=0}show()});
+  show();
+})();
+</script>
+</body>
+</html>

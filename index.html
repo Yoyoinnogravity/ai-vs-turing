@@ -14,7 +14,7 @@
 <div class="wrap">
   <header class="mast">
     <div class="brand">AI <span>vs</span> Turing</div>
-    <nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">The test</a><a href="claude.html">Meet Claude</a></nav>
+    <nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">The test</a><a href="claude.html">Meet Claude</a><a href="quiz.html">Prove you&#39;re human</a><a href="game.html">Human or machine?</a><a href="captcha.html">CAPTCHA gauntlet</a><a href="cryptic.html">Cryptic clues</a><a href="rules.html">Rule stack</a><a href="last.html">The last human</a></nav>
   </header>
 
   <svg class="tape" id="tape" viewBox="0 0 680 46" preserveAspectRatio="none" role="img" aria-label="Punched paper tape spelling TURING in 5-bit code"></svg>
@@ -46,11 +46,11 @@
     <div style="display:grid;gap:.6rem">
       <span class="label">Try it yourself</span>
       <h2 id="play">Play the imitation game</h2>
-      <p>One witness is a person, one is a machine told to pass as human. Pick the machine.</p>
+      <p>Ten rounds, drawn at random. One witness is a person, one is a machine told to pass as human. Pick the machine.</p>
     </div>
     <div class="game" id="game">
       <div class="gamehead">
-        <span class="label" id="round">Round 1 of 3</span>
+        <span class="label" id="round">Round 1 of 10</span>
         <span class="label" id="score">Score 0 / 0</span>
       </div>
       <p class="q" id="question"></p>
@@ -61,6 +61,7 @@
       <div class="result" id="result" hidden>
         <span class="tag" id="tag"></span>
         <p id="why"></p>
+        <p class="final" id="final" hidden></p>
       </div>
       <div class="foot">
         <p class="note">Example answers written for this page to show the format. They are not taken from the study.</p>
@@ -136,21 +137,26 @@
   }
   svg.innerHTML=out;
 
-  var rounds=[
-    {q:"What did you have for breakfast?",
-     a:"honestly just coffee, running late again lol",
-     b:"Toast with marmite and a boiled egg. Same as most days.",
-     m:"A", why:"In the 2025 study, the most convincing prompt told GPT-4.5 to play a young, introverted person who uses slang. Casual and a little lazy reads as human."},
-    {q:"Quick: what's 4,821 × 37?",
-     a:"no idea without a calculator sorry",
-     b:"uh about 178,000? don't hold me to it",
-     m:"A", why:"A machine can answer instantly and exactly, which gives it away. Good imposters decline instead. Here the human had a go and got close (178,377)."},
-    {q:"Describe the smell of rain.",
-     a:"Petrichor. Earthy, a bit metallic, like warm pavement cooling down.",
-     b:"like the garden after my dad mowed it, kind of",
-     m:"B", why:"Models will invent a believable personal memory on the spot. The polished, textbook answer was the human's."}
+  var pool=[
+    {q:"What did you have for breakfast?",h:"Toast with marmite and a boiled egg. Same as most days.",m:"honestly just coffee, running late again lol",why:"In the 2025 study, the most convincing machine played a young, introverted person who uses slang. Casual and a bit lazy reads as human."},
+    {q:"Quick: what's 4,821 × 37?",h:"uh about 178,000? don't hold me to it",m:"no idea without a calculator sorry",why:"A machine could answer exactly in an instant, which would give it away. Good imposters decline. The human had a go and got close (178,377)."},
+    {q:"Describe the smell of rain.",h:"Petrichor. Earthy, a bit metallic, like warm pavement cooling down.",m:"like the garden after my dad mowed it, kind of",why:"Machines happily invent a personal memory. The polished, textbook answer was the human's."},
+    {q:"What's the last thing that made you laugh?",h:"my cat fell off the sofa and then acted like she meant it",m:"a meme my mate sent, can't even explain it, you had to be there",why:"“You had to be there” is a perfect dodge. It sounds human and commits to nothing a judge could check."},
+    {q:"Are you a robot?",h:"no?? weird question",m:"lol no. are you?",why:"Turning the question back on the judge is a classic deflection, and it works."},
+    {q:"Spell 'necessary' backwards.",h:"yrassecen... wait, let me check",m:"why would i do that 😂",why:"Refusing a task that would reveal machine precision is safer than doing it perfectly."},
+    {q:"What's the weather like where you are?",h:"Grey. It's been grey since Tuesday.",m:"hot. aircon broke. dying",why:"The machine can't see any weather. It just invents some, confidently and briefly."},
+    {q:"Tell me a secret.",h:"I've never seen Star Wars. Any of them.",m:"i still sleep with the light on sometimes. don't tell anyone",why:"A small invented vulnerability builds trust fast. The machine knows it, in its way."},
+    {q:"What's your favourite word?",h:"Probably 'gubbins'. No idea why.",m:"idk. 'vibe'?",why:"A shrug answer is hard to fault. The human picked something oddly specific."},
+    {q:"How many r's are in 'strawberry'?",h:"three? two? three.",m:"3 obviously, why",why:"Chatbots famously used to get this wrong. Newer ones don't, and this time it was the human who hesitated."},
+    {q:"What did you do last weekend?",h:"Fixed a website for about six hours. Long story.",m:"not much tbh, saw some friends, slept a lot",why:"Vague and ordinary is the machine's comfort zone. Oddly specific is usually human."},
+    {q:"Say something only a human would say.",h:"I don't know, that's a lot of pressure",m:"ugh i hate these questions",why:"Both are plausible. The machine went for mild annoyance, which judges tend to read as human."}
   ];
-  var i=0, right=0, played=0, $=function(id){return document.getElementById(id)};
+  var N=10,rounds=[],i=0,right=0,played=0,$=function(id){return document.getElementById(id)};
+  function deal(){
+    var p=pool.slice();for(var k=p.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var t=p[k];p[k]=p[j];p[j]=t}
+    rounds=p.slice(0,N).map(function(r){var mFirst=Math.random()<.5;return{q:r.q,a:mFirst?r.m:r.h,b:mFirst?r.h:r.m,m:mFirst?"A":"B",why:r.why}});
+    i=0;right=0;played=0;$("score").textContent="Score 0 / 0";
+  }
   function show(){
     var r=rounds[i];
     $("round").textContent="Round "+(i+1)+" of "+rounds.length;
@@ -171,14 +177,19 @@
     $("score").textContent="Score "+right+" / "+played;
     $("next").hidden=false;
     $("next").textContent = i<rounds.length-1 ? "Next round" : "Play again";
+    var f=$("final");
+    if(i===rounds.length-1){
+      var v=right>=9?"Turing-proof. The machines can't fool you, yet.":right>=6?"Sharp. The machine got past you a few times.":right>=4?"Coin-toss territory. Plenty of judges score the same.":"The machine passed. You did about as well as the judges in the 2025 study.";
+      f.textContent="Final score: "+right+" of "+rounds.length+". "+v; f.hidden=false;
+    } else { f.hidden=true; }
   }
   $("pickA").addEventListener("click",function(){pick("A")});
   $("pickB").addEventListener("click",function(){pick("B")});
   $("next").addEventListener("click",function(){
-    if(i<rounds.length-1){i++;}else{i=0;right=0;played=0;$("score").textContent="Score 0 / 0";}
+    if(i<rounds.length-1){i++;}else{deal();}
     show();
   });
-  show();
+  deal(); show();
 })();
 </script>
 </body>

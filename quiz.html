@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Seven classic puzzles that machines ace and humans trip over. Take the reverse Turing test.">
+<title>Prove You're Human · AI vs Turing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<style>
+.qz{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.25rem}
+.qhead{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.qtext{font:600 clamp(1.15rem,2.4vw,1.45rem)/1.4 var(--body);max-width:60ch}
+.opts{display:grid;gap:.6rem}
+.opts button{text-align:left;text-transform:none;letter-spacing:0;font:400 1rem/1.4 var(--mono);padding:.9rem 1rem;background:var(--paper)}
+.opts button.right{border-color:var(--good);color:var(--good)}
+.opts button.wrong{border-color:var(--bad);color:var(--bad)}
+.opts button:disabled{opacity:1}
+.end{display:grid;gap:.8rem}
+.end .big{color:var(--signal)}
+</style>
+<div class="wrap">
+  <header class="mast">
+    <div class="brand">AI <span>vs</span> Turing</div>
+    <nav class="nav" aria-label="Pages"><a href="index.html">The test</a><a href="claude.html">Meet Claude</a><a href="quiz.html" aria-current="page">Prove you&#39;re human</a><a href="game.html">Human or machine?</a><a href="captcha.html">CAPTCHA gauntlet</a><a href="cryptic.html">Cryptic clues</a><a href="rules.html">Rule stack</a><a href="last.html">The last human</a></nav>
+  </header>
+
+  <section class="hero" aria-labelledby="h1">
+    <p class="label">Reverse Turing test</p>
+    <h1 id="h1">Prove you're <em>human.</em></h1>
+    <p class="lede">Seven classic puzzles from psychology and maths. Each one has an answer that feels obviously right and isn't. Machines tend to sail through them. Humans tend to trip, which is how you know you're one of us.</p>
+  </section>
+
+  <section aria-labelledby="go">
+    <h2 id="go" class="label">The test</h2>
+    <div class="qz" id="qz">
+      <div class="qhead"><span class="label" id="qn">Question 1 of 7</span><span class="label" id="qs">Score 0</span></div>
+      <p class="qtext" id="qt"></p>
+      <div class="opts" id="qo"></div>
+      <div class="result" id="qr" hidden><span class="tag" id="qtag"></span><p id="qwhy"></p></div>
+      <div class="end" id="qend" hidden>
+        <span class="label">Your result</span>
+        <span class="big" id="qfinal"></span>
+        <h3 id="qverdict"></h3>
+        <p id="qline"></p>
+      </div>
+      <div class="foot"><span class="note" id="qsrc"></span><button id="qnext" type="button" hidden>Next question</button></div>
+    </div>
+  </section>
+
+  <section class="sources" aria-labelledby="src">
+    <span class="label" id="src">Where these puzzles come from</span>
+    <ol>
+      <li>Questions 1–3: Shane Frederick, “Cognitive Reflection and Decision Making”, Journal of Economic Perspectives 19(4), 2005</li>
+      <li>Question 4: Erickson &amp; Mattson, “From words to meaning: A semantic illusion”, Journal of Verbal Learning and Verbal Behavior, 1981</li>
+      <li>Question 5: Tversky &amp; Kahneman, “Extensional versus intuitive reasoning: The conjunction fallacy in probability judgment”, Psychological Review, 1983</li>
+      <li>Question 6: the Monty Hall problem, made famous by Marilyn vos Savant's column in Parade magazine, 1990</li>
+    </ol>
+  </section>
+
+  <footer>
+    <span class="brand">AI <span>vs</span> Turing</span>
+    <span class="label">ai-vs-turing.com</span>
+    <p class="disclaimer">An independent showcase. Not affiliated with or endorsed by Anthropic. Claude is a product of <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>.</p>
+  </footer>
+</div>
+<script>
+(function(){
+  var Q=[
+    {q:"A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",o:["10 cents","5 cents","1 cent"],a:1,
+     w:"If the ball were 10 cents, the bat would be $1.10 and the total $1.20. Ball 5 cents, bat $1.05, total $1.10. Most people's first answer is 10 cents."},
+    {q:"If 5 machines take 5 minutes to make 5 widgets, how long would 100 machines take to make 100 widgets?",o:["100 minutes","20 minutes","5 minutes"],a:2,
+     w:"Each machine makes one widget in 5 minutes. A hundred machines working at once make a hundred widgets in the same 5 minutes."},
+    {q:"A patch of lily pads doubles in size every day. It takes 48 days to cover the whole lake. How long does it take to cover half the lake?",o:["24 days","47 days","46 days"],a:1,
+     w:"It doubles daily, so the day before it covers the whole lake, it covers half. Day 47."},
+    {q:"How many animals of each kind did Moses take on the ark?",o:["Two","Seven","None"],a:2,
+     w:"It was Noah, not Moses. Most people answer “two” without noticing, a slip psychologists call the Moses illusion."},
+    {q:"Linda is 31, single, outspoken and very bright. She studied philosophy and cares deeply about discrimination and social justice. Which is more likely?",o:["Linda is a bank teller","Linda is a bank teller and active in the feminist movement"],a:0,
+     w:"Two things both being true can never be more likely than one of them alone. The story makes the second option feel right, which is the conjunction fallacy."},
+    {q:"On a game show you pick door 1 of 3. One door hides a car. The host, who knows where it is, opens door 3 to show a goat and offers you door 2. What should you do?",o:["Stick with door 1","Switch to door 2","It makes no difference"],a:1,
+     w:"Switching wins two times in three. Your first pick had a 1-in-3 chance, and the host's choice pushes the other 2-in-3 onto the remaining door."},
+    {q:"Mary's father has five daughters: Nana, Nene, Nini and Nono. What is the fifth daughter's name?",o:["Nunu","Nina","Mary"],a:2,
+     w:"It says so in the first two words. The pattern pulls you towards Nunu."}
+  ];
+  var src=["Frederick, 2005","Frederick, 2005","Frederick, 2005","Erickson & Mattson, 1981","Tversky & Kahneman, 1983","Monty Hall problem","A classic riddle"];
+  var i=0,score=0,$=function(id){return document.getElementById(id)};
+  function show(){
+    var q=Q[i]; $("qn").textContent="Question "+(i+1)+" of "+Q.length; $("qt").textContent=q.q;
+    $("qsrc").textContent="Source: "+src[i]; var box=$("qo"); box.innerHTML="";
+    q.o.forEach(function(t,k){var b=document.createElement("button");b.type="button";b.id="opt"+k;b.textContent=t;b.addEventListener("click",function(){pick(k)});box.appendChild(b)});
+    $("qr").hidden=true; $("qnext").hidden=true; $("qend").hidden=true; $("qt").hidden=false; box.hidden=false;
+  }
+  function pick(k){
+    var q=Q[i],ok=k===q.a; if(ok)score++;
+    Array.prototype.forEach.call($("qo").children,function(b,n){b.disabled=true;if(n===q.a)b.classList.add("right");else if(n===k)b.classList.add("wrong")});
+    $("qtag").textContent=ok?"Correct":"Very human of you"; $("qtag").className="tag "+(ok?"ok":"no");
+    $("qwhy").textContent=q.w; $("qr").hidden=false; $("qs").textContent="Score "+score;
+    $("qnext").textContent=i<Q.length-1?"Next question":"See my result"; $("qnext").hidden=false;
+  }
+  function finish(){
+    $("qt").hidden=true;$("qo").hidden=true;$("qr").hidden=true;$("qsrc").textContent="";
+    $("qfinal").textContent=score+" / "+Q.length;
+    var v,l;
+    if(score===Q.length){v="Suspiciously perfect.";l="No trips, no slips. We'd like to ask you a few more questions about your childhood.";}
+    else if(score>=4){v="Convincingly human.";l="You caught most of the traps and fell into a few, which is exactly what a person does.";}
+    else {v="Gloriously human.";l="Your instincts answered before your reasoning did. Every one of these traps was designed for you, and you walked in. Welcome to the species.";}
+    $("qverdict").textContent=v;$("qline").textContent=l;$("qend").hidden=false;$("qnext").textContent="Try again";
+  }
+  $("qnext").addEventListener("click",function(){
+    if($("qend").hidden===false){i=0;score=0;$("qs").textContent="Score 0";show();return;}
+    if(i<Q.length-1){i++;show();}else finish();
+  });
+  show();
+})();
+</script>
+</body>
+</html>

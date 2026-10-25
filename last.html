@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Everyone is assumed to be an AI. Prove you are the last human, using only memories, senses, doubt and mess.">
+<title>The Last Human · AI vs Turing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<style>.box{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.1rem}
+.prompt{font:400 clamp(1.2rem,2.6vw,1.5rem)/1.4 var(--body);max-width:45ch}
+.box textarea,.box input[type=text]{font:400 1.05rem/1.5 var(--body);padding:.8rem;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:3px;width:100%}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.checks li{font:600 .9rem/1.4 var(--mono);display:flex;gap:.6rem}
+.checks li::before{content:"·";width:1.2rem;text-align:center;color:var(--muted)}
+.checks li.ok{color:var(--good)} .checks li.ok::before{content:"✓"}
+.checks li.no{color:var(--bad)} .checks li.no::before{content:"✗"}
+.example{border-left:3px solid var(--machine);padding-left:1rem;display:grid;gap:.3rem}
+.example q{font:400 1.05rem/1.5 var(--body);quotes:none}
+.btns{display:flex;gap:.6rem;flex-wrap:wrap}
+.bars{display:grid;gap:.5rem}
+.bar{display:grid;grid-template-columns:8rem 1fr 2.5rem;gap:.6rem;align-items:center;font:600 .82rem var(--mono)}
+.bar span.track{height:10px;background:var(--line);border-radius:5px;overflow:hidden;display:block}
+.bar span.fill{height:100%;background:var(--signal);display:block;width:0}
+.total{font:900 clamp(2.4rem,6vw,3.6rem)/1 var(--display);font-stretch:75%;color:var(--signal);font-variant-numeric:tabular-nums}
+@media (max-width:30rem){.bar{grid-template-columns:6rem 1fr 2.2rem}}</style>
+<div class="wrap">
+  <header class="mast"><div class="brand">AI <span>vs</span> Turing</div><nav class="nav" aria-label="Pages"><a href="index.html">The test</a><a href="claude.html">Meet Claude</a><a href="quiz.html">Prove you&#39;re human</a><a href="game.html">Human or machine?</a><a href="captcha.html">CAPTCHA gauntlet</a><a href="cryptic.html">Cryptic clues</a><a href="rules.html">Rule stack</a><a href="last.html" aria-current="page">The last human</a></nav></header>
+  <section class="hero" aria-labelledby="h1"><p class="label">Game · The last human</p><h1 id="h1">Prove you're the <em>last human.</em></h1><p class="lede">Everyone is now assumed to be an AI. To prove otherwise, intelligence won't help, and nor will knowledge. Only memories, the senses, doubt and contradiction count. Answer four questions and let the judge decide.</p></section>
+  <section><h2 class="label">Question <span id="qn">1</span> of 4</h2>
+<div class="box">
+  <p class="prompt" id="qp"></p>
+  <textarea id="qa" rows="5" aria-label="Your answer"></textarea>
+  <div class="btns"><button type="button" id="qj">Judge my answer</button><button type="button" id="qnext" hidden>Next question</button></div>
+  <div id="qres" hidden>
+    <div class="bars" id="qbars"></div>
+    <p><span class="total" id="qtot"></span> <span class="label">human score</span></p>
+    <p id="qverdict"></p>
+    <div class="example"><span class="label">Claude answered too · scored <span id="qcs"></span></span><q id="qcl"></q></div>
+  </div>
+</div>
+<p class="note">The judge is a simple scoring rule, not an AI. It rewards what tends to make stories human: specific details, the senses, doubt and a little mess.</p></section>
+  <footer><span class="brand">AI <span>vs</span> Turing</span><span class="label">ai-vs-turing.com</span><p class="disclaimer">An independent showcase. Not affiliated with or endorsed by Anthropic. Claude is a product of <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>.</p></footer>
+</div>
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)};
+var Q=[
+ {p:"Describe a small embarrassing moment that still pops into your head years later.",c:"In 2009 I waved back at someone in Tesco who was actually waving at the woman behind me. I think I pretended to be stretching, but honestly I'm not sure it fooled anyone. The bakery smell still brings it back."},
+ {p:"Describe the smell of a place you haven't been in years.",c:"My nan's hallway in Swansea. Coal dust, Pears soap and something sweet, maybe the tin of Quality Street she kept by the stairs. I might be making the sweets up, actually."},
+ {p:"Tell me about a decision you knew was wrong while you were making it.",c:"I bought a 1998 Rover with a cracked windscreen because the seller was nice and it was raining. I knew it was a mistake before I'd even shaken his hand, but I paid anyway. It lasted three weeks."},
+ {p:"Name an object you've kept for years that would mean nothing to anyone else.",c:"A blue biro from a hotel in Lisbon. It stopped working around 2015, I think, but I still keep it in the kitchen drawer. I couldn't tell you why."}
+];
+var sens=/\b(smell|smelt|smelled|scent|taste|tasted|sound|noise|loud|quiet|cold|warm|hot|damp|sticky|soft|rough|bright|dark|sweet|sour|bitter|salty|itchy|wet|dust|soap)\b/gi;
+var doubt=/\b(maybe|perhaps|i think|not sure|probably|might|i guess|can't remember|cannot remember|no idea|i forget|honestly|i suppose)\b/gi;
+var mess=/\b(but|although|though|anyway|actually|still|even|apparently|for some reason|no idea why|why)\b/gi;
+function count(re,t){var m=t.match(re);return m?m.length:0}
+function score(t){
+  var w=t.trim().split(/\s+/).filter(Boolean),n=w.length;
+  var nums=count(/\d/g,t)>0?1:0, names=0;
+  t.replace(/[.!?]\s+/g,". ").split(". ").forEach(function(s){s.trim().split(/\s+/).slice(1).forEach(function(x){if(/^[A-Z][a-z]/.test(x)&&x!=="I")names++})});
+  var spec=Math.min(25,nums*10+names*5), sen=Math.min(25,count(sens,t)*9), dbt=Math.min(20,count(doubt,t)*10), msy=Math.min(15,count(mess,t)*5), len=Math.min(15,Math.round(n/40*15));
+  return {"Specific details":[spec,25],"The senses":[sen,25],"Doubt":[dbt,20],"Mess":[msy,15],"Length":[len,15],total:spec+sen+dbt+msy+len};
+}
+var i=0;
+function bars(s){var h="";Object.keys(s).forEach(function(k){if(k==="total")return;var v=s[k];h+='<div class="bar"><span>'+k+'</span><span class="track"><span class="fill" style="width:'+(v[0]/v[1]*100)+'%"></span></span><span>'+v[0]+'</span></div>'});return h}
+function show(){$("qn").textContent=i+1;$("qp").textContent=Q[i].p;$("qa").value="";$("qres").hidden=true;$("qnext").hidden=true;$("qj").disabled=false}
+$("qj").addEventListener("click",function(){
+  var t=$("qa").value.trim();if(!t){$("qa").focus();return}
+  var s=score(t),c=score(Q[i].c);
+  $("qbars").innerHTML=bars(s);$("qtot").textContent=s.total;
+  $("qverdict").textContent=s.total>=70?"Verdict: human. Messy, specific and unsure of yourself, which is exactly right.":s.total>=40?"Verdict: probably human. Add a smell, a doubt or an oddly exact detail to be sure.":"Verdict: suspiciously tidy. That answer could have come from a machine.";
+  $("qcl").textContent=Q[i].c;$("qcs").textContent=c.total+(c.total>s.total?", higher than you":"");
+  $("qres").hidden=false;$("qnext").hidden=false;$("qnext").textContent=i<Q.length-1?"Next question":"Start again";
+});
+$("qnext").addEventListener("click",function(){i=i<Q.length-1?i+1:0;show()});
+show();
+})();
+</script>
+</body>
+</html>
