@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Turing set the bar in 1950. In 2025, judges picked the machine as the human. A showcase of what AI can do now.">
+<title>AI vs Turing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="brand">AI <span>vs</span> Turing</div>
+    <nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">The test</a><a href="claude.html">Meet Claude</a></nav>
+  </header>
+
+  <svg class="tape" id="tape" viewBox="0 0 680 46" preserveAspectRatio="none" role="img" aria-label="Punched paper tape spelling TURING in 5-bit code"></svg>
+
+  <section class="hero" aria-labelledby="h1">
+    <p class="label">“I propose to consider the question, ‘Can machines think?’” — A. M. Turing, 1950</p>
+    <h1 id="h1">The machine was picked as <em>the human.</em></h1>
+    <p class="lede">Turing set a test and a deadline. A judge talks to two strangers for five minutes, one person and one machine, and has to say which is which. Here is the bar he set, and what happened when it was finally run properly.</p>
+    <div class="verdict">
+      <div>
+        <span class="label">Turing's bar, 1950</span>
+        <span class="big">≤70%</span>
+        <p>He predicted that by about 2000 an average judge would identify the machine correctly no more than 70% of the time after five minutes.</p>
+      </div>
+      <div>
+        <span class="label">GPT-4.5, 2025</span>
+        <span class="big hit">27%</span>
+        <p>In a controlled three-party test, judges chose GPT-4.5 as the human 73% of the time, so they were right only 27% of the time. They picked the machine over the real person.</p>
+      </div>
+      <div>
+        <span class="label">The 1966 chatbot ELIZA</span>
+        <span class="big">23%</span>
+        <p>Judged human in 23% of games in the same study. The gap between ELIZA and GPT-4.5 is six decades of work.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="play">
+    <div style="display:grid;gap:.6rem">
+      <span class="label">Try it yourself</span>
+      <h2 id="play">Play the imitation game</h2>
+      <p>One witness is a person, one is a machine told to pass as human. Pick the machine.</p>
+    </div>
+    <div class="game" id="game">
+      <div class="gamehead">
+        <span class="label" id="round">Round 1 of 3</span>
+        <span class="label" id="score">Score 0 / 0</span>
+      </div>
+      <p class="q" id="question"></p>
+      <div class="witnesses">
+        <div class="w" id="wA"><p class="say" id="sayA"></p><button id="pickA" type="button">A is the machine</button></div>
+        <div class="w" id="wB"><p class="say" id="sayB"></p><button id="pickB" type="button">B is the machine</button></div>
+      </div>
+      <div class="result" id="result" hidden>
+        <span class="tag" id="tag"></span>
+        <p id="why"></p>
+      </div>
+      <div class="foot">
+        <p class="note">Example answers written for this page to show the format. They are not taken from the study.</p>
+        <button id="next" type="button" hidden>Next round</button>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="log">
+    <div style="display:grid;gap:.6rem">
+      <span class="label">Logbook</span>
+      <h2 id="log">How we got here</h2>
+    </div>
+    <ol class="log">
+      <li><span class="yr">1950</span><div><h3>Turing poses the question</h3><p>“Computing Machinery and Intelligence” in the journal Mind replaces “can machines think?” with a game anyone can run.</p></div></li>
+      <li><span class="yr">1966</span><div><h3>ELIZA</h3><p>Joseph Weizenbaum's script mirrors your words back as questions. Some users confided in it anyway.</p></div></li>
+      <li><span class="yr">1997</span><div><h3>Deep Blue beats Kasparov</h3><p>IBM's machine wins a six-game chess match against the reigning world champion.</p></div></li>
+      <li><span class="yr">2016</span><div><h3>AlphaGo beats Lee Sedol</h3><p>DeepMind wins 4–1 at Go, a game long thought to need human intuition.</p></div></li>
+      <li class="key"><span class="yr">2024</span><div><h3>A Nobel Prize for AlphaFold</h3><p>Demis Hassabis and John Jumper share the Chemistry prize for predicting protein structures. The AlphaFold database now holds about 200 million of them.</p></div></li>
+      <li class="key"><span class="yr">2025</span><div><h3>The Turing test, passed</h3><p>Jones and Bergen run a pre-registered three-party test. GPT-4.5 is judged human 73% of the time.</p></div></li>
+      <li class="key"><span class="yr">2025</span><div><h3>Gold at the Maths Olympiad</h3><p>Google DeepMind and OpenAI models each solve 5 of 6 IMO problems in plain language, reaching the gold-medal score of 35 out of 42.</p></div></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="index">
+    <div style="display:grid;gap:.6rem">
+      <span class="label">Showcase</span>
+      <h2 id="index">What it can do now</h2>
+      <p>Passing for human was the old finish line. These are the things machines do today that Turing's test never asked about.</p>
+    </div>
+    <div class="grid">
+      <article class="cap"><span class="label">Conversation</span><h3>Pass for a person</h3><p>Hold a five-minute chat that most judges can't tell from a human's, in a controlled, repeatable study.</p><span class="proof">Judged human 73% of the time</span></article>
+      <article class="cap"><span class="label">Reasoning</span><h3>Prove olympiad theorems</h3><p>Write full proofs for the hardest school-level maths competition in the world, within the human time limit.</p><span class="proof">35 / 42 points, IMO 2025</span></article>
+      <article class="cap"><span class="label">Science</span><h3>Read the shape of life</h3><p>Predict the 3D structure of a protein from its sequence, work that once took a lab months or years per protein.</p><span class="proof">~200 million structures published</span></article>
+      <article class="cap"><span class="label">Strategy</span><h3>Out-play the champions</h3><p>Beat the best human players at chess and Go, and find moves professionals now study.</p><span class="proof">AlphaGo 4 – Lee Sedol 1</span></article>
+    </div>
+  </section>
+
+  <section class="sources" aria-labelledby="src">
+    <span class="label" id="src">Sources</span>
+    <ol>
+      <li><a href="https://arxiv.org/abs/2503.23674" target="_blank" rel="noopener">Jones &amp; Bergen, “Large Language Models Pass the Turing Test”, arXiv:2503.23674, March 2025</a></li>
+      <li><a href="https://www.ebi.ac.uk/about/news/alphafold-wins-nobel-prize-chemistry-2024/" target="_blank" rel="noopener">EMBL-EBI, AlphaFold and the 2024 Nobel Prize in Chemistry</a></li>
+      <li><a href="https://rits.shanghai.nyu.edu/ai/ai-wins-gold-at-2025-international-mathematical-olympiad/" target="_blank" rel="noopener">NYU Shanghai RITS, AI wins gold at the 2025 International Mathematical Olympiad</a></li>
+      <li>A. M. Turing, “Computing Machinery and Intelligence”, Mind 59 (1950), 433–460</li>
+    </ol>
+  </section>
+
+  <footer>
+    <span class="brand">AI <span>vs</span> Turing</span>
+    <span class="label">ai-vs-turing.com</span>
+    <p class="disclaimer">An independent showcase. Not affiliated with or endorsed by Anthropic. Claude is a product of <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  // Punched tape: TURING in ITA2 (Baudot) 5-bit letters, plus a sprocket row
+  var codes={T:"10000",U:"00111",R:"01010",I:"00110",N:"01100",G:"11010"};
+  var word="TURING", svg=document.getElementById("tape"), ns="http://www.w3.org/2000/svg";
+  var cols=word.length*3+4, step=680/cols, out="";
+  out+='<rect x="0" y="1" width="680" height="44" fill="none" stroke="currentColor" stroke-opacity=".35"/>';
+  for(var c=0;c<cols;c++){
+    var x=step*(c+.5), letter=null;
+    if(c>=2 && (c-2)%3===1 && Math.floor((c-2)/3)<word.length) letter=codes[word[Math.floor((c-2)/3)]];
+    for(var r=0;r<6;r++){
+      var y=6+r*6.8, sprocket=(r===3);
+      var on = sprocket || (letter && letter[r>3?r-1:r]==="1");
+      if(r===5 && letter) on = letter[4]==="1";
+      if(sprocket) out+='<circle cx="'+x+'" cy="'+y+'" r="1.2" fill="currentColor" fill-opacity=".45"/>';
+      else if(on) out+='<circle class="hole" style="animation-delay:'+(c*0.05)+'s" cx="'+x+'" cy="'+y+'" r="2.6" fill="currentColor"/>';
+    }
+  }
+  svg.innerHTML=out;
+
+  var rounds=[
+    {q:"What did you have for breakfast?",
+     a:"honestly just coffee, running late again lol",
+     b:"Toast with marmite and a boiled egg. Same as most days.",
+     m:"A", why:"In the 2025 study, the most convincing prompt told GPT-4.5 to play a young, introverted person who uses slang. Casual and a little lazy reads as human."},
+    {q:"Quick: what's 4,821 × 37?",
+     a:"no idea without a calculator sorry",
+     b:"uh about 178,000? don't hold me to it",
+     m:"A", why:"A machine can answer instantly and exactly, which gives it away. Good imposters decline instead. Here the human had a go and got close (178,377)."},
+    {q:"Describe the smell of rain.",
+     a:"Petrichor. Earthy, a bit metallic, like warm pavement cooling down.",
+     b:"like the garden after my dad mowed it, kind of",
+     m:"B", why:"Models will invent a believable personal memory on the spot. The polished, textbook answer was the human's."}
+  ];
+  var i=0, right=0, played=0, $=function(id){return document.getElementById(id)};
+  function show(){
+    var r=rounds[i];
+    $("round").textContent="Round "+(i+1)+" of "+rounds.length;
+    $("question").innerHTML="<b>Judge:</b> "+r.q;
+    $("sayA").textContent=r.a; $("sayB").textContent=r.b;
+    $("wA").classList.remove("is-machine"); $("wB").classList.remove("is-machine");
+    $("pickA").disabled=$("pickB").disabled=false;
+    $("result").hidden=true; $("next").hidden=true;
+  }
+  function pick(side){
+    var r=rounds[i], ok=(side===r.m); played++; if(ok) right++;
+    $("w"+r.m).classList.add("is-machine");
+    $("pickA").disabled=$("pickB").disabled=true;
+    $("tag").textContent=ok?"Correct: "+r.m+" was the machine":"Fooled: "+r.m+" was the machine";
+    $("tag").className="tag "+(ok?"ok":"no");
+    $("why").textContent=r.why;
+    $("result").hidden=false;
+    $("score").textContent="Score "+right+" / "+played;
+    $("next").hidden=false;
+    $("next").textContent = i<rounds.length-1 ? "Next round" : "Play again";
+  }
+  $("pickA").addEventListener("click",function(){pick("A")});
+  $("pickB").addEventListener("click",function(){pick("B")});
+  $("next").addEventListener("click",function(){
+    if(i<rounds.length-1){i++;}else{i=0;right=0;played=0;$("score").textContent="Score 0 / 0";}
+    show();
+  });
+  show();
+})();
+</script>
+</body>
+</html>
