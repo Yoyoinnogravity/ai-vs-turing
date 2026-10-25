@@ -77,7 +77,7 @@
   function end(){
     phase="end";$("cn").textContent="5";$("ct").textContent="Result: probably human";
     $("cs").textContent="Confidence: 51%";
-    $("stage").innerHTML='<p>You failed all five checks. Congratulations: CAPTCHAs work by spotting behaviour that is slow, hesitant and a little confused, so failing them is the most human thing you could have done.</p>';
+    $("stage").innerHTML='<div class="end"><span class="label">Your score</span><span class="big">5 / 5</span><h3>Human points</h3></div><p>You failed all five robot checks, and that earns you a point each. Congratulations: CAPTCHAs work by spotting behaviour that is slow, hesitant and a little confused, so failing them is the most human thing you could have done.</p>';
     $("cv").hidden=true;$("cnote").textContent="Access to the internet: granted, reluctantly.";$("cgo").textContent="Try again";
   }
   $("cgo").addEventListener("click",function(){

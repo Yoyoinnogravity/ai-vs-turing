@@ -35,9 +35,9 @@
   <p class="prompt" id="rp"></p>
   <input type="text" id="ri" autocomplete="off" aria-label="Your seven words">
   <ul class="checks" id="rc"></ul>
+  <div class="end" id="rdone" hidden><span class="label">Your score</span><span class="big" id="rscore"></span><h3 id="rtag"></h3><p id="rmsg"></p></div>
   <div class="btns"><button type="button" id="rgo" disabled>Submit</button><button type="button" id="rshow">Show Claude's answer</button><button type="button" id="rskip">Skip this level</button></div>
   <div class="example" id="rex" hidden><span class="label">Claude's answer</span><q id="rexq"></q></div>
-  <div class="result" id="rdone" hidden><span class="tag ok" id="rtag"></span><p id="rmsg"></p></div>
 </div></section>
   <footer><span class="brand">AI <span>vs</span> Turing</span><span class="label">ai-vs-turing.com</span><p class="disclaimer">An independent showcase. Not affiliated with or endorsed by Anthropic. Claude is a product of <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>.</p></footer>
 </div>
@@ -77,14 +77,14 @@ function show(){
 $("ri").addEventListener("input",draw);
 $("rshow").addEventListener("click",function(){$("rexq").textContent=L[lv].ex;$("rex").hidden=false});
 $("rgo").addEventListener("click",function(){
-  if($("rgo").textContent==="Play again"){lv=0;used={};cleared=0;$("rskip").hidden=false;$("rshow").hidden=false;show();return}
+  if($("rgo").textContent==="Play again"){lv=0;used={};cleared=0;$("rp").hidden=false;$("ri").hidden=false;$("rc").hidden=false;$("rskip").hidden=false;$("rshow").hidden=false;show();return}
   words($("ri").value).map(clean).forEach(function(x){if(x)used[x]=1});cleared++;
   next();
 });
 $("rskip").addEventListener("click",function(){next()});
 function next(){
   if(lv<L.length-1){lv++;show();return}
-  $("ri").disabled=true;$("rskip").hidden=true;$("rshow").hidden=true;$("rtag").textContent=cleared+" of 5 levels cleared";
+  $("ri").disabled=true;$("rp").hidden=true;$("ri").hidden=true;$("rc").hidden=true;$("rex").hidden=true;$("rskip").hidden=true;$("rshow").hidden=true;$("rscore").textContent=cleared+" / 5";$("rtag").textContent=cleared===1?"1 level cleared":cleared+" levels cleared";
   $("rmsg").textContent=cleared===5?"Impressive. Five stacked rules without a slip. Machines find this easy; people who manage it should feel proud.":cleared>=3?"Well played. Juggling that many rules at once is genuinely hard for a human brain.":"Tough, isn't it? Keeping five rules in your head at once is where machines shine, and why they make handy helpers.";
   $("rdone").hidden=false;$("rgo").textContent="Play again";$("rgo").disabled=false;
 }

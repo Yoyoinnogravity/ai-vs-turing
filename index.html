@@ -61,7 +61,7 @@
       <div class="result" id="result" hidden>
         <span class="tag" id="tag"></span>
         <p id="why"></p>
-        <p class="final" id="final" hidden></p>
+        <div class="end" id="final" hidden><span class="label">Your score</span><span class="big" id="fscore"></span><p class="final" id="fline"></p></div>
       </div>
       <div class="foot">
         <p class="note">Example answers written for this page to show the format. They are not taken from the study.</p>
@@ -181,7 +181,7 @@
     var f=$("final");
     if(i===rounds.length-1){
       var v=right>=9?"Brilliant. You have a great ear for people.":right>=6?"Lovely work. A few were very hard to call.":right>=4?"Right in the middle, just like most judges.":"These were hard! You scored like the judges in the 2025 study.";
-      f.textContent="Final score: "+right+" of "+rounds.length+". "+v; f.hidden=false;
+      $("fscore").textContent=right+" / "+rounds.length; $("fline").textContent=v; f.hidden=false;
     } else { f.hidden=true; }
   }
   $("pickA").addEventListener("click",function(){pick("A")});

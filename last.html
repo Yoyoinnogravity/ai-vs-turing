@@ -34,13 +34,13 @@
 <div class="box">
   <p class="prompt" id="qp"></p>
   <textarea id="qa" rows="5" aria-label="Your answer"></textarea>
-  <div class="btns"><button type="button" id="qj">Judge my answer</button><button type="button" id="qnext" hidden>Next question</button></div>
   <div id="qres" hidden>
     <div class="bars" id="qbars"></div>
-    <p><span class="total" id="qtot"></span> <span class="label">human score</span></p>
+    <p><span class="label" id="qlab">Human score for this answer</span><br><span class="total" id="qtot"></span> <span class="label">out of 100</span></p>
     <p id="qverdict"></p>
     <div class="example"><span class="label">Claude answered too · scored <span id="qcs"></span></span><q id="qcl"></q></div>
   </div>
+  <div class="btns"><button type="button" id="qj">Judge my answer</button><button type="button" id="qnext" hidden>Next question</button></div>
 </div>
 <p class="note">The judge is a simple scoring rule, not an AI. It rewards what tends to make stories human: specific details, the senses, doubt and a little mess.</p></section>
   <footer><span class="brand">AI <span>vs</span> Turing</span><span class="label">ai-vs-turing.com</span><p class="disclaimer">An independent showcase. Not affiliated with or endorsed by Anthropic. Claude is a product of <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>.</p></footer>
@@ -67,7 +67,7 @@ function score(t){
 }
 var i=0,tot=0,ctot=0;
 function bars(s){var h="";Object.keys(s).forEach(function(k){if(k==="total")return;var v=s[k];h+='<div class="bar"><span>'+k+'</span><span class="track"><span class="fill" style="width:'+(v[0]/v[1]*100)+'%"></span></span><span>'+v[0]+'</span></div>'});return h}
-function show(){$("qcl").parentNode.hidden=false;$("qn").textContent=i+1;$("qp").textContent=Q[i].p;$("qa").value="";$("qres").hidden=true;$("qnext").hidden=true;$("qj").disabled=false}
+function show(){$("qlab").textContent="Human score for this answer";$("qcl").parentNode.hidden=false;$("qn").textContent=i+1;$("qp").textContent=Q[i].p;$("qa").value="";$("qres").hidden=true;$("qnext").hidden=true;$("qj").disabled=false}
 $("qj").addEventListener("click",function(){
   var t=$("qa").value.trim();if(!t){$("qa").focus();return}
   if($("qnext").hidden===false)return;var s=score(t),c=score(Q[i].c);tot+=s.total;ctot+=c.total;
@@ -81,7 +81,7 @@ $("qnext").addEventListener("click",function(){
   if(i<Q.length-1){i++;show();return}
   var avg=Math.round(tot/Q.length),cavg=Math.round(ctot/Q.length);
   $("qp").textContent="Your result";$("qa").hidden=true;$("qj").hidden=true;$("qbars").innerHTML="";
-  $("qtot").textContent=avg;
+  $("qtot").textContent=avg;$("qlab").textContent="Your score: average across all four answers";
   $("qverdict").textContent=(avg>=60?"The judge is convinced: you are human. Your memories are full of smells, doubts and odd little details no machine has lived through.":avg>=35?"Probably human. Next time, add the smell of the room or the thing you're still not sure about.":"The judge isn't sure yet. Real memories are messy, so don't tidy them up.")+" Claude averaged "+cavg+". It can imitate a memory, but it has never stood in your nan's hallway.";
   $("qcl").parentNode.hidden=true;$("qnext").textContent="Play again";
 });
